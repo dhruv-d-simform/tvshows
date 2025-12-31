@@ -1,0 +1,390 @@
+import { useParams, useNavigate } from 'react-router';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import { useRecentlyVisitedShows } from '@/utils/recentlyVisited';
+import {
+    TVShowSchema,
+    SeasonSchema,
+    EpisodeSchema,
+    CastMemberSchema,
+    ImageSchema,
+} from '@/types';
+
+export function DetailsPage() {
+    const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const { addShow } = useRecentlyVisitedShows();
+    const showId = parseInt(id || '0');
+
+    const {
+        data: show,
+        isLoading: showLoading,
+        error: showError,
+    } = useQuery({
+        queryKey: ['show', showId],
+        queryFn: async () => {
+            const response = await fetch(
+                `https://api.tvmaze.com/shows/${showId}`
+            );
+            if (!response.ok) throw new Error('Failed to fetch show');
+            const data = await response.json();
+            return TVShowSchema.parse(data);
+        },
+        enabled: !!showId,
+    });
+
+    // Add to recently visited when show loads
+    useEffect(() => {
+        if (show) {
+            addShow(show);
+        }
+    }, [show, addShow]);
+
+    const { data: seasons = [] } = useQuery({
+        queryKey: ['seasons', showId],
+        queryFn: async () => {
+            const response = await fetch(
+                `https://api.tvmaze.com/shows/${showId}/seasons`
+            );
+            if (!response.ok) throw new Error('Failed to fetch seasons');
+            const data = await response.json();
+            return z.array(SeasonSchema).parse(data);
+        },
+        enabled: !!showId,
+    });
+
+    const { data: episodes = [] } = useQuery({
+        queryKey: ['episodes', showId],
+        queryFn: async () => {
+            const response = await fetch(
+                `https://api.tvmaze.com/shows/${showId}/episodes`
+            );
+            if (!response.ok) throw new Error('Failed to fetch episodes');
+            const data = await response.json();
+            return z.array(EpisodeSchema).parse(data);
+        },
+        enabled: !!showId,
+    });
+
+    const { data: cast = [] } = useQuery({
+        queryKey: ['cast', showId],
+        queryFn: async () => {
+            const response = await fetch(
+                `https://api.tvmaze.com/shows/${showId}/cast`
+            );
+            if (!response.ok) throw new Error('Failed to fetch cast');
+            const data = await response.json();
+            return z.array(CastMemberSchema).parse(data);
+        },
+        enabled: !!showId,
+    });
+
+    const { data: images = [] } = useQuery({
+        queryKey: ['images', showId],
+        queryFn: async () => {
+            const response = await fetch(
+                `https://api.tvmaze.com/shows/${showId}/images`
+            );
+            if (!response.ok) throw new Error('Failed to fetch images');
+            const data = await response.json();
+            return z.array(ImageSchema).parse(data);
+        },
+        enabled: !!showId,
+    });
+
+    if (showLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <p>Loading...</p>
+            </div>
+        );
+    }
+
+    if (showError || !show) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <p className="text-red-500 mb-4">
+                        Error loading show details
+                    </p>
+                    <Button onClick={() => navigate(-1)}>
+                        <ArrowLeft className="w-4 h-4 mr-2" />
+                        Go Back
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
+    const year = show.premiered ? new Date(show.premiered).getFullYear() : null;
+
+    // Group episodes by season
+    const episodesBySeason = episodes.reduce(
+        (acc, episode) => {
+            const season = episode.season;
+            if (!acc[season]) acc[season] = [];
+            acc[season].push(episode);
+            return acc;
+        },
+        {} as Record<number, typeof episodes>
+    );
+
+    return (
+        <div className="min-h-screen bg-background">
+            {/* Back Button */}
+            <div className="container mx-auto px-4 py-4">
+                <Button variant="ghost" onClick={() => navigate(-1)}>
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back
+                </Button>
+            </div>
+
+            {/* Show Details */}
+            <div className="container mx-auto px-4 pb-8">
+                <div className="flex flex-col lg:flex-row gap-8">
+                    {/* Poster */}
+                    <div className="shrink-0">
+                        <img
+                            src={
+                                show.image?.original ||
+                                show.image?.medium ||
+                                '/placeholder.png'
+                            }
+                            alt={show.name}
+                            className="w-full max-w-sm rounded-lg shadow-lg"
+                        />
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex-1">
+                        <h1 className="text-3xl font-bold mb-4">{show.name}</h1>
+                        <div className="space-y-2 text-sm">
+                            {year && (
+                                <p>
+                                    <strong>Year:</strong> {year}
+                                </p>
+                            )}
+                            {show.genres.length > 0 && (
+                                <p>
+                                    <strong>Genres:</strong>{' '}
+                                    {show.genres.join(', ')}
+                                </p>
+                            )}
+                            {show.language && (
+                                <p>
+                                    <strong>Language:</strong> {show.language}
+                                </p>
+                            )}
+                            {show.rating?.average && (
+                                <p>
+                                    <strong>Rating:</strong> ⭐{' '}
+                                    {show.rating.average}
+                                </p>
+                            )}
+                            {show.externals?.imdb && (
+                                <p>
+                                    <strong>IMDb:</strong>{' '}
+                                    <a
+                                        href={`https://www.imdb.com/title/${show.externals.imdb}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-500 hover:underline"
+                                    >
+                                        {show.externals.imdb}
+                                    </a>
+                                </p>
+                            )}
+                        </div>
+                        {show.summary && (
+                            <div className="mt-4">
+                                <h2 className="text-xl font-semibold mb-2">
+                                    Summary
+                                </h2>
+                                <div
+                                    dangerouslySetInnerHTML={{
+                                        __html: show.summary,
+                                    }}
+                                />
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Images Gallery */}
+                {images.length > 0 && (
+                    <section className="mt-8">
+                        <h2 className="text-2xl font-semibold mb-4">Images</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {images.slice(0, 12).map((image) => (
+                                <div
+                                    key={image.id}
+                                    className="aspect-square overflow-hidden rounded-lg"
+                                >
+                                    <img
+                                        src={
+                                            image.resolutions.original?.url ||
+                                            image.resolutions.medium?.url
+                                        }
+                                        alt={`${show.name} ${image.type || 'image'}`}
+                                        className="w-full h-full object-cover hover:scale-105 transition-transform"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        {images.length > 12 && (
+                            <p className="text-sm text-muted-foreground mt-2">
+                                Showing 12 of {images.length} images
+                            </p>
+                        )}
+                    </section>
+                )}
+
+                {/* Cast */}
+                {cast.length > 0 && (
+                    <section className="mt-8">
+                        <h2 className="text-2xl font-semibold mb-4">Cast</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                            {cast.slice(0, 12).map((member, index) => (
+                                <div key={index} className="text-center">
+                                    <img
+                                        src={
+                                            member.person.image?.medium ||
+                                            '/placeholder.png'
+                                        }
+                                        alt={member.person.name}
+                                        className="w-20 h-20 rounded-full object-cover mx-auto mb-2"
+                                    />
+                                    <p className="font-semibold text-sm">
+                                        {member.person.name}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {member.character.name}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Seasons */}
+                {seasons.length > 0 && (
+                    <section className="mt-8">
+                        <h2 className="text-2xl font-semibold mb-4">Seasons</h2>
+                        <div className="space-y-4">
+                            {seasons.map((season) => (
+                                <div
+                                    key={season.id}
+                                    className="flex gap-4 p-4 border rounded-lg"
+                                >
+                                    {season.image?.medium && (
+                                        <img
+                                            src={season.image.medium}
+                                            alt={`Season ${season.number}`}
+                                            className="w-20 h-28 object-cover rounded"
+                                        />
+                                    )}
+                                    <div className="flex-1">
+                                        <h3 className="font-semibold">
+                                            Season {season.number}
+                                        </h3>
+                                        {season.episodeOrder && (
+                                            <p className="text-sm text-muted-foreground">
+                                                {season.episodeOrder} episodes
+                                            </p>
+                                        )}
+                                        {season.summary && (
+                                            <div
+                                                className="text-sm mt-2"
+                                                dangerouslySetInnerHTML={{
+                                                    __html: season.summary,
+                                                }}
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Episodes */}
+                {Object.keys(episodesBySeason).length > 0 && (
+                    <section className="mt-8">
+                        <h2 className="text-2xl font-semibold mb-4">
+                            Episodes
+                        </h2>
+                        <div className="space-y-6">
+                            {Object.entries(episodesBySeason).map(
+                                ([seasonNum, seasonEpisodes]) => (
+                                    <div key={seasonNum}>
+                                        <h3 className="text-lg font-semibold mb-2">
+                                            Season {seasonNum}
+                                        </h3>
+                                        <div className="space-y-2">
+                                            {seasonEpisodes.map((episode) => (
+                                                <div
+                                                    key={episode.id}
+                                                    className="flex gap-4 p-3 border rounded"
+                                                >
+                                                    {episode.image?.medium && (
+                                                        <img
+                                                            src={
+                                                                episode.image
+                                                                    .medium
+                                                            }
+                                                            alt={episode.name}
+                                                            className="w-16 h-12 object-cover rounded"
+                                                        />
+                                                    )}
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="font-medium">
+                                                                {episode.number}
+                                                                . {episode.name}
+                                                            </span>
+                                                            {episode.runtime && (
+                                                                <span className="text-sm text-muted-foreground">
+                                                                    (
+                                                                    {
+                                                                        episode.runtime
+                                                                    }
+                                                                    min)
+                                                                </span>
+                                                            )}
+                                                            {episode.rating
+                                                                ?.average && (
+                                                                <span className="text-sm">
+                                                                    ⭐{' '}
+                                                                    {
+                                                                        episode
+                                                                            .rating
+                                                                            .average
+                                                                    }
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        {episode.summary && (
+                                                            <div
+                                                                className="text-sm mt-1"
+                                                                dangerouslySetInnerHTML={{
+                                                                    __html: episode.summary,
+                                                                }}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )
+                            )}
+                        </div>
+                    </section>
+                )}
+            </div>
+        </div>
+    );
+}
