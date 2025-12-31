@@ -3,6 +3,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState, useMemo } from 'react';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
 import { ArrowLeft, ChevronUp } from 'lucide-react';
 import { useRecentlyVisitedShows } from '@/utils/recentlyVisited';
 import {
@@ -43,6 +51,10 @@ export function DetailsPage() {
             addShow(show);
         }
     }, [show, addShow]);
+
+    useEffect(() => {
+        setCurrentCastPage(1);
+    }, [showId]);
 
     const { data: seasons = [] } = useQuery({
         queryKey: ['seasons', showId],
@@ -122,6 +134,7 @@ export function DetailsPage() {
 
     const [currentPosterIndex, setCurrentPosterIndex] = useState(0);
     const [selectedSeasons, setSelectedSeasons] = useState<Season[]>([]);
+    const [currentCastPage, setCurrentCastPage] = useState(1);
 
     const toggleSeason = (season: Season) => {
         setSelectedSeasons((prev) =>
@@ -167,6 +180,13 @@ export function DetailsPage() {
     }
 
     const year = show.premiered ? new Date(show.premiered).getFullYear() : null;
+
+    const itemsPerPage = 12;
+    const totalCastPages = Math.ceil(cast.length / itemsPerPage);
+    const currentCast = cast.slice(
+        (currentCastPage - 1) * itemsPerPage,
+        currentCastPage * itemsPerPage
+    );
 
     return (
         <div className="min-h-screen bg-background">
@@ -448,25 +468,95 @@ export function DetailsPage() {
                     <section className="mt-8">
                         <h2 className="text-2xl font-semibold mb-4">Cast</h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                            {cast.slice(0, 12).map((member, index) => (
-                                <div key={index} className="text-center">
-                                    <img
-                                        src={
-                                            member.person.image?.medium ||
-                                            '/placeholder.png'
-                                        }
-                                        alt={member.person.name}
-                                        className="w-20 h-20 rounded-full object-cover mx-auto mb-2"
-                                    />
-                                    <p className="font-semibold text-sm">
+                            {currentCast.map((member, index) => (
+                                <div
+                                    key={index}
+                                    className="text-center group cursor-pointer"
+                                >
+                                    <div className="relative w-20 h-20 mx-auto mb-2">
+                                        <img
+                                            src={
+                                                member.person.image?.medium ||
+                                                '/placeholder.png'
+                                            }
+                                            alt={member.person.name}
+                                            className="w-20 h-20 rounded-full object-cover absolute inset-0 group-hover:opacity-0 transition-opacity duration-200"
+                                        />
+                                        <img
+                                            src={
+                                                member.character.image
+                                                    ?.medium ||
+                                                '/placeholder.png'
+                                            }
+                                            alt={member.character.name}
+                                            className="w-20 h-20 rounded-full object-cover absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                        />
+                                    </div>
+                                    <p className="font-semibold text-sm group-hover:font-normal">
                                         {member.person.name}
                                     </p>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="text-xs text-muted-foreground group-hover:font-bold group-hover:text-foreground">
                                         {member.character.name}
                                     </p>
                                 </div>
                             ))}
                         </div>
+                        {totalCastPages > 1 && (
+                            <Pagination className="mt-4">
+                                <PaginationContent>
+                                    <PaginationItem>
+                                        <PaginationPrevious
+                                            onClick={() =>
+                                                setCurrentCastPage((prev) =>
+                                                    Math.max(1, prev - 1)
+                                                )
+                                            }
+                                            className={
+                                                currentCastPage === 1
+                                                    ? 'pointer-events-none opacity-50'
+                                                    : 'cursor-pointer'
+                                            }
+                                        />
+                                    </PaginationItem>
+                                    {Array.from(
+                                        { length: totalCastPages },
+                                        (_, i) => i + 1
+                                    ).map((page) => (
+                                        <PaginationItem key={page}>
+                                            <PaginationLink
+                                                onClick={() =>
+                                                    setCurrentCastPage(page)
+                                                }
+                                                isActive={
+                                                    currentCastPage === page
+                                                }
+                                                className="cursor-pointer"
+                                            >
+                                                {page}
+                                            </PaginationLink>
+                                        </PaginationItem>
+                                    ))}
+                                    <PaginationItem>
+                                        <PaginationNext
+                                            onClick={() =>
+                                                setCurrentCastPage((prev) =>
+                                                    Math.min(
+                                                        totalCastPages,
+                                                        prev + 1
+                                                    )
+                                                )
+                                            }
+                                            className={
+                                                currentCastPage ===
+                                                totalCastPages
+                                                    ? 'pointer-events-none opacity-50'
+                                                    : 'cursor-pointer'
+                                            }
+                                        />
+                                    </PaginationItem>
+                                </PaginationContent>
+                            </Pagination>
+                        )}
                     </section>
                 )}
 
