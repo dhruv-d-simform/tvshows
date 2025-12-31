@@ -270,62 +270,6 @@ export function DetailsPage() {
                     </div>
                 </div>
 
-                {/* Images Gallery */}
-                {images.length > 0 && (
-                    <section className="mt-8">
-                        <h2 className="text-2xl font-semibold mb-4">Images</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {images.slice(0, 12).map((image) => (
-                                <div
-                                    key={image.id}
-                                    className="aspect-square overflow-hidden rounded-lg"
-                                >
-                                    <img
-                                        src={
-                                            image.resolutions.original?.url ||
-                                            image.resolutions.medium?.url
-                                        }
-                                        alt={`${show.name} ${image.type || 'image'}`}
-                                        className="w-full h-full object-cover hover:scale-105 transition-transform"
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                        {images.length > 12 && (
-                            <p className="text-sm text-muted-foreground mt-2">
-                                Showing 12 of {images.length} images
-                            </p>
-                        )}
-                    </section>
-                )}
-
-                {/* Cast */}
-                {cast.length > 0 && (
-                    <section className="mt-8">
-                        <h2 className="text-2xl font-semibold mb-4">Cast</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                            {cast.slice(0, 12).map((member, index) => (
-                                <div key={index} className="text-center">
-                                    <img
-                                        src={
-                                            member.person.image?.medium ||
-                                            '/placeholder.png'
-                                        }
-                                        alt={member.person.name}
-                                        className="w-20 h-20 rounded-full object-cover mx-auto mb-2"
-                                    />
-                                    <p className="font-semibold text-sm">
-                                        {member.person.name}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground">
-                                        {member.character.name}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
-
                 {/* Seasons */}
                 {seasons.length > 0 && (
                     <section className="mt-8">
@@ -439,6 +383,62 @@ export function DetailsPage() {
                                 )
                             )}
                         </div>
+                    </section>
+                )}
+
+                {/* Cast */}
+                {cast.length > 0 && (
+                    <section className="mt-8">
+                        <h2 className="text-2xl font-semibold mb-4">Cast</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                            {cast.slice(0, 12).map((member, index) => (
+                                <div key={index} className="text-center">
+                                    <img
+                                        src={
+                                            member.person.image?.medium ||
+                                            '/placeholder.png'
+                                        }
+                                        alt={member.person.name}
+                                        className="w-20 h-20 rounded-full object-cover mx-auto mb-2"
+                                    />
+                                    <p className="font-semibold text-sm">
+                                        {member.person.name}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {member.character.name}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* Images Gallery */}
+                {images.length > 0 && (
+                    <section className="mt-8">
+                        <h2 className="text-2xl font-semibold mb-4">Images</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            {images.slice(0, 12).map((image) => (
+                                <div
+                                    key={image.id}
+                                    className="aspect-square overflow-hidden rounded-lg"
+                                >
+                                    <img
+                                        src={
+                                            image.resolutions.original?.url ||
+                                            image.resolutions.medium?.url
+                                        }
+                                        alt={`${show.name} ${image.type || 'image'}`}
+                                        className="w-full h-full object-cover hover:scale-105 transition-transform"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        {images.length > 12 && (
+                            <p className="text-sm text-muted-foreground mt-2">
+                                Showing 12 of {images.length} images
+                            </p>
+                        )}
                     </section>
                 )}
             </div>
