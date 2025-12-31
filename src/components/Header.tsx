@@ -8,7 +8,7 @@ interface HeaderProps {
 
 export function Header({ onSearch, initialValue }: HeaderProps) {
     return (
-        <header className="border-b">
+        <header className="border-b sticky top-0 bg-background z-10">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <Link
                     to="/"
