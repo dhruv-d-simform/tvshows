@@ -8,6 +8,10 @@ export function HomePage() {
     const navigate = useNavigate();
     const { shows, removeShow } = useRecentlyVisitedShows();
 
+    const handleSearch = (query: string) => {
+        navigate(`/search?q=${encodeURIComponent(query)}`);
+    };
+
     const handleShowClick = (show: TVShow) => {
         navigate(`/show/${show.id}`);
     };
@@ -18,20 +22,7 @@ export function HomePage() {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
-
-            {/* Search Bar - Link to Search */}
-            <div className="border-b bg-muted/50">
-                <div className="container mx-auto px-4 py-6">
-                    <button
-                        onClick={() => navigate('/search')}
-                        className="flex gap-2 max-w-md mx-auto w-full justify-center items-center px-4 py-2 border rounded-md hover:bg-muted transition-colors"
-                    >
-                        <span>🔍</span>
-                        Search for TV shows...
-                    </button>
-                </div>
-            </div>
+            <Header onSearch={handleSearch} />
 
             {/* Recently Visited */}
             <main className="container mx-auto px-4 py-6">

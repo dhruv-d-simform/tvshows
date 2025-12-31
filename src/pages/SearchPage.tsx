@@ -1,18 +1,23 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { SearchBar } from '@/components/SearchBar';
+import { useNavigate, useSearchParams } from 'react-router';
 import { ShowCard } from '@/components/ShowCard';
 import { Header } from '@/components/Header';
 import { useSearchShows } from '@/api/search';
 import type { TVShow } from '@/types';
 
 export function SearchPage() {
-    const [query, setQuery] = useState('');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const initialQuery = searchParams.get('q') || '';
+    const [query, setQuery] = useState(initialQuery);
     const navigate = useNavigate();
     const { data: results = [], isLoading, error } = useSearchShows(query);
 
     const handleSearch = (searchQuery: string) => {
         setQuery(searchQuery);
+        // Update URL without navigating
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set('q', searchQuery);
+        setSearchParams(newParams);
     };
 
     const handleShowClick = (show: TVShow) => {
@@ -21,14 +26,7 @@ export function SearchPage() {
 
     return (
         <div className="min-h-screen bg-background">
-            <Header />
-
-            {/* Search Bar */}
-            <div className="border-b bg-muted/50">
-                <div className="container mx-auto px-4 py-6">
-                    <SearchBar onSearch={handleSearch} initialValue={query} />
-                </div>
-            </div>
+            <Header onSearch={handleSearch} initialValue={query} />
 
             {/* Results */}
             <main className="container mx-auto px-4 py-6">

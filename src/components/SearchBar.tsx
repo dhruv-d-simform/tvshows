@@ -19,13 +19,13 @@ export function SearchBar({ onSearch, initialValue = '' }: SearchBarProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex gap-2 max-w-md mx-auto">
+        <form onSubmit={handleSubmit} className="flex gap-2 max-w-2xl mx-auto">
             <Input
                 type="text"
                 placeholder="Search for TV shows..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="flex-1"
+                className="flex-1 min-w-64"
             />
             <Button type="submit" disabled={!query.trim()}>
                 <Search className="w-4 h-4" />
