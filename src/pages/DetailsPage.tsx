@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState, useMemo } from 'react';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ChevronUp } from 'lucide-react';
 import { useRecentlyVisitedShows } from '@/utils/recentlyVisited';
 import {
     TVShowSchema,
@@ -11,6 +11,7 @@ import {
     EpisodeSchema,
     CastMemberSchema,
     ImageSchema,
+    Season,
 } from '@/types';
 
 export function DetailsPage() {
@@ -120,6 +121,15 @@ export function DetailsPage() {
     }, [images, show]);
 
     const [currentPosterIndex, setCurrentPosterIndex] = useState(0);
+    const [selectedSeasons, setSelectedSeasons] = useState<Season[]>([]);
+
+    const toggleSeason = (season: Season) => {
+        setSelectedSeasons((prev) =>
+            prev.some((s) => s.id === season.id)
+                ? prev.filter((s) => s.id !== season.id)
+                : [...prev, season]
+        );
+    };
 
     useEffect(() => {
         if (posterImages.length > 1) {
@@ -157,17 +167,6 @@ export function DetailsPage() {
     }
 
     const year = show.premiered ? new Date(show.premiered).getFullYear() : null;
-
-    // Group episodes by season
-    const episodesBySeason = episodes.reduce(
-        (acc, episode) => {
-            const season = episode.season;
-            if (!acc[season]) acc[season] = [];
-            acc[season].push(episode);
-            return acc;
-        },
-        {} as Record<number, typeof episodes>
-    );
 
     return (
         <div className="min-h-screen bg-background">
@@ -274,114 +273,172 @@ export function DetailsPage() {
                 {seasons.length > 0 && (
                     <section className="mt-8">
                         <h2 className="text-2xl font-semibold mb-4">Seasons</h2>
-                        <div className="space-y-4">
-                            {seasons.map((season) => (
-                                <div
-                                    key={season.id}
-                                    className="flex gap-4 p-4 border rounded-lg"
-                                >
-                                    {season.image?.medium && (
-                                        <img
-                                            src={season.image.medium}
-                                            alt={`Season ${season.number}`}
-                                            className="w-20 h-28 object-cover rounded"
-                                        />
-                                    )}
-                                    <div className="flex-1">
-                                        <h3 className="font-semibold">
-                                            Season {season.number}
-                                        </h3>
-                                        {season.episodeOrder && (
-                                            <p className="text-sm text-muted-foreground">
-                                                {season.episodeOrder} episodes
-                                            </p>
-                                        )}
-                                        {season.summary && (
-                                            <div
-                                                className="text-sm mt-2"
-                                                dangerouslySetInnerHTML={{
-                                                    __html: season.summary,
-                                                }}
-                                            />
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
-                )}
-
-                {/* Episodes */}
-                {Object.keys(episodesBySeason).length > 0 && (
-                    <section className="mt-8">
-                        <h2 className="text-2xl font-semibold mb-4">
-                            Episodes
-                        </h2>
-                        <div className="space-y-6">
-                            {Object.entries(episodesBySeason).map(
-                                ([seasonNum, seasonEpisodes]) => (
-                                    <div key={seasonNum}>
-                                        <h3 className="text-lg font-semibold mb-2">
-                                            Season {seasonNum}
-                                        </h3>
-                                        <div className="space-y-2">
-                                            {seasonEpisodes.map((episode) => (
-                                                <div
-                                                    key={episode.id}
-                                                    className="flex gap-4 p-3 border rounded"
-                                                >
-                                                    {episode.image?.medium && (
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                            {seasons.map((season) => {
+                                if (
+                                    selectedSeasons.some(
+                                        (s) => s.id === season.id
+                                    )
+                                ) {
+                                    return (
+                                        <div
+                                            key={season.id}
+                                            className="col-span-full"
+                                        >
+                                            <div className="border rounded-lg p-4 bg-muted">
+                                                <div className="flex justify-between items-center mb-4 bg-secondary text-secondary-foreground p-2 rounded">
+                                                    <h3 className="text-xl font-semibold">
+                                                        Season {season.number}{' '}
+                                                        Details
+                                                    </h3>
+                                                    <button
+                                                        onClick={() =>
+                                                            toggleSeason(season)
+                                                        }
+                                                        className="text-secondary-foreground hover:text-secondary-foreground/80"
+                                                    >
+                                                        <ChevronUp className="h-4 w-4" />
+                                                    </button>
+                                                </div>
+                                                <div className="flex gap-4 mb-4">
+                                                    {season.image?.medium && (
                                                         <img
                                                             src={
-                                                                episode.image
+                                                                season.image
                                                                     .medium
                                                             }
-                                                            alt={episode.name}
-                                                            className="w-16 h-12 object-cover rounded"
+                                                            alt={`Season ${season.number}`}
+                                                            className="w-20 h-28 object-cover rounded"
                                                         />
                                                     )}
                                                     <div className="flex-1">
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="font-medium">
-                                                                {episode.number}
-                                                                . {episode.name}
-                                                            </span>
-                                                            {episode.runtime && (
-                                                                <span className="text-sm text-muted-foreground">
-                                                                    (
-                                                                    {
-                                                                        episode.runtime
-                                                                    }
-                                                                    min)
-                                                                </span>
-                                                            )}
-                                                            {episode.rating
-                                                                ?.average && (
-                                                                <span className="text-sm">
-                                                                    ⭐{' '}
-                                                                    {
-                                                                        episode
-                                                                            .rating
-                                                                            .average
-                                                                    }
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                        {episode.summary && (
+                                                        {season.episodeOrder && (
+                                                            <p className="text-sm text-muted-foreground mb-2">
+                                                                {
+                                                                    season.episodeOrder
+                                                                }{' '}
+                                                                episodes
+                                                            </p>
+                                                        )}
+                                                        {season.summary && (
                                                             <div
-                                                                className="text-sm mt-1"
+                                                                className="text-sm"
                                                                 dangerouslySetInnerHTML={{
-                                                                    __html: episode.summary,
+                                                                    __html: season.summary,
                                                                 }}
                                                             />
                                                         )}
                                                     </div>
                                                 </div>
-                                            ))}
+                                                {/* Episodes for this season */}
+                                                <div className="flex gap-4 overflow-x-auto pb-2 custom-scrollbar">
+                                                    {episodes
+                                                        .filter(
+                                                            (e) =>
+                                                                e.season ===
+                                                                season.number
+                                                        )
+                                                        .map((episode) => {
+                                                            const card = (
+                                                                <div className="shrink-0 w-64 border rounded">
+                                                                    {episode
+                                                                        .image
+                                                                        ?.medium && (
+                                                                        <img
+                                                                            src={
+                                                                                episode
+                                                                                    .image
+                                                                                    .medium
+                                                                            }
+                                                                            alt={
+                                                                                episode.name
+                                                                            }
+                                                                            className="w-full aspect-video object-cover rounded-t"
+                                                                        />
+                                                                    )}
+                                                                    <div className="p-3">
+                                                                        <div className="mb-2">
+                                                                            <h4 className="font-semibold text-base mb-1">
+                                                                                {
+                                                                                    episode.name
+                                                                                }
+                                                                            </h4>
+                                                                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                                                                <span>
+                                                                                    Ep{' '}
+                                                                                    {
+                                                                                        episode.number
+                                                                                    }
+                                                                                </span>
+                                                                                {episode.runtime && (
+                                                                                    <span>
+                                                                                        •{' '}
+                                                                                        {
+                                                                                            episode.runtime
+                                                                                        }{' '}
+                                                                                        min
+                                                                                    </span>
+                                                                                )}
+                                                                                {episode
+                                                                                    .rating
+                                                                                    ?.average && (
+                                                                                    <span>
+                                                                                        •
+                                                                                        ⭐{' '}
+                                                                                        {
+                                                                                            episode
+                                                                                                .rating
+                                                                                                .average
+                                                                                        }
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                            return (
+                                                                <div
+                                                                    key={
+                                                                        episode.id
+                                                                    }
+                                                                >
+                                                                    {card}
+                                                                </div>
+                                                            );
+                                                        })}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+                                return (
+                                    <div
+                                        key={season.id}
+                                        className="cursor-pointer border rounded-lg hover:shadow-lg transition-shadow"
+                                        onClick={() => toggleSeason(season)}
+                                    >
+                                        {season.image?.medium && (
+                                            <img
+                                                src={season.image.medium}
+                                                alt={`Season ${season.number}`}
+                                                className="w-full aspect-2/3 object-cover rounded-t-lg"
+                                            />
+                                        )}
+                                        <div className="p-4 pt-2">
+                                            <h3 className="font-semibold text-center text-xl">
+                                                Season {season.number}
+                                            </h3>
+                                            {season.episodeOrder && (
+                                                <p className="text-sm text-muted-foreground text-center">
+                                                    {season.episodeOrder}{' '}
+                                                    episodes
+                                                </p>
+                                            )}
                                         </div>
                                     </div>
-                                )
-                            )}
+                                );
+                            })}
                         </div>
                     </section>
                 )}
