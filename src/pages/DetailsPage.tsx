@@ -386,21 +386,29 @@ export function DetailsPage() {
                                                                         ''
                                                                     }
                                                                 >
-                                                                    {episode
-                                                                        .image
-                                                                        ?.medium && (
-                                                                        <img
-                                                                            src={
-                                                                                episode
-                                                                                    .image
-                                                                                    .medium
-                                                                            }
-                                                                            alt={
-                                                                                episode.name
-                                                                            }
-                                                                            className="w-full aspect-video object-cover rounded-t"
-                                                                        />
-                                                                    )}
+                                                                    {episode.image &&
+                                                                        (episode
+                                                                            .image
+                                                                            .original ||
+                                                                            episode
+                                                                                .image
+                                                                                .medium) && (
+                                                                            <img
+                                                                                src={
+                                                                                    episode
+                                                                                        .image
+                                                                                        .original ||
+                                                                                    episode
+                                                                                        .image
+                                                                                        .medium ||
+                                                                                    '/placeholder.png'
+                                                                                }
+                                                                                alt={
+                                                                                    episode.name
+                                                                                }
+                                                                                className="w-full aspect-video object-cover rounded-t"
+                                                                            />
+                                                                        )}
                                                                     <div className="p-3">
                                                                         <div className="mb-2">
                                                                             <h4 className="font-semibold text-base mb-1">
