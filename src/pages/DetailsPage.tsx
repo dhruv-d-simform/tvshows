@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
@@ -95,6 +95,43 @@ export function DetailsPage() {
         enabled: !!showId,
     });
 
+    const posterImages = useMemo(() => {
+        const posters = images.filter((img) => img.type === 'poster');
+        const arr = [];
+        if (show?.image?.original || show?.image?.medium) {
+            arr.push({
+                id: 'main',
+                url:
+                    show.image.original ||
+                    show.image.medium ||
+                    '/placeholder.png',
+            });
+        }
+        posters.forEach((p) => {
+            arr.push({
+                id: p.id,
+                url:
+                    p.resolutions.original?.url ||
+                    p.resolutions.medium?.url ||
+                    '/placeholder.png',
+            });
+        });
+        return arr;
+    }, [images, show]);
+
+    const [currentPosterIndex, setCurrentPosterIndex] = useState(0);
+
+    useEffect(() => {
+        if (posterImages.length > 1) {
+            const interval = setInterval(() => {
+                setCurrentPosterIndex(
+                    (prev) => (prev + 1) % posterImages.length
+                );
+            }, 3000);
+            return () => clearInterval(interval);
+        }
+    }, [posterImages.length]);
+
     if (showLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -147,15 +184,35 @@ export function DetailsPage() {
                 <div className="flex flex-col lg:flex-row gap-8">
                     {/* Poster */}
                     <div className="shrink-0">
-                        <img
-                            src={
-                                show.image?.original ||
-                                show.image?.medium ||
-                                '/placeholder.png'
-                            }
-                            alt={show.name}
-                            className="w-full max-w-sm rounded-lg shadow-lg"
-                        />
+                        {posterImages.length > 0 ? (
+                            <div className="relative overflow-hidden rounded-lg aspect-2/3 w-full max-w-sm">
+                                <div
+                                    className="flex transition-transform duration-500 h-full"
+                                    style={{
+                                        transform: `translateX(-${currentPosterIndex * 100}%)`,
+                                    }}
+                                >
+                                    {posterImages.map((poster, index) => (
+                                        <img
+                                            key={poster.id}
+                                            src={poster.url}
+                                            alt={`${show.name} poster ${index + 1}`}
+                                            className="w-full h-full object-cover shrink-0"
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <img
+                                src={
+                                    show.image?.original ||
+                                    show.image?.medium ||
+                                    '/placeholder.png'
+                                }
+                                alt={show.name}
+                                className="w-full max-w-sm rounded-lg shadow-lg"
+                            />
+                        )}
                     </div>
 
                     {/* Info */}
