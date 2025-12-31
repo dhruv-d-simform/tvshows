@@ -16,27 +16,29 @@ export function ShowCard({ show, onClick, onRemove }: ShowCardProps) {
 
     return (
         <Card
-            className="relative cursor-pointer hover:shadow-lg transition-shadow"
+            className="relative cursor-pointer hover:shadow-lg transition-shadow py-0 max-w-64"
             onClick={onClick}
         >
-            <CardContent className="p-4">
-                <div className="flex gap-4">
-                    <img
-                        src={show.image?.medium || '/placeholder.png'}
-                        alt={show.name}
-                        className="w-20 h-28 object-cover rounded"
-                    />
-                    <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-sm truncate">
-                            {show.name}
-                        </h3>
-                        <div className="text-xs text-muted-foreground space-y-1">
-                            {year && <p>{year}</p>}
-                            {genres && <p>{genres}</p>}
-                            <div className="flex items-center gap-2">
-                                {rating && <span>⭐ {rating}</span>}
-                                {show.language && <span>{show.language}</span>}
-                            </div>
+            <CardContent className="p-0">
+                <img
+                    src={
+                        show.image?.original ||
+                        show.image?.medium ||
+                        '/placeholder.png'
+                    }
+                    alt={show.name}
+                    className="w-full aspect-2/3 object-cover rounded-t-xl"
+                />
+                <div className="p-4">
+                    <h3 className="font-semibold text-sm truncate">
+                        {show.name}
+                    </h3>
+                    <div className="text-xs text-muted-foreground space-y-1">
+                        {year && <p>{year}</p>}
+                        {genres && <p>{genres}</p>}
+                        <div className="flex items-center gap-2">
+                            {rating && <span>⭐ {rating}</span>}
+                            {show.language && <span>{show.language}</span>}
                         </div>
                     </div>
                 </div>

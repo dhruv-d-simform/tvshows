@@ -39,7 +39,7 @@ export function SearchPage() {
                         <p className="text-red-500">Error: {error.message}</p>
                     </div>
                 ) : results.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-x-2 gap-y-6">
                         {results.map((show) => (
                             <ShowCard
                                 key={show.id}
