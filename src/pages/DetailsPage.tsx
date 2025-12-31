@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/pagination';
 import { ArrowLeft, ChevronUp } from 'lucide-react';
 import { useRecentlyVisitedShows } from '@/utils/recentlyVisited';
+import Masonry from 'react-masonry-css';
 import {
     TVShowSchema,
     SeasonSchema,
@@ -564,11 +565,20 @@ export function DetailsPage() {
                 {images.length > 0 && (
                     <section className="mt-8">
                         <h2 className="text-2xl font-semibold mb-4">Images</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {images.slice(0, 12).map((image) => (
+                        <Masonry
+                            breakpointCols={{
+                                default: 4,
+                                1100: 3,
+                                700: 2,
+                                500: 1,
+                            }}
+                            className="flex -ml-4"
+                            columnClassName="pl-4"
+                        >
+                            {images.map((image) => (
                                 <div
                                     key={image.id}
-                                    className="aspect-square overflow-hidden rounded-lg"
+                                    className="mb-4 overflow-hidden rounded-lg"
                                 >
                                     <img
                                         src={
@@ -576,16 +586,11 @@ export function DetailsPage() {
                                             image.resolutions.medium?.url
                                         }
                                         alt={`${show.name} ${image.type || 'image'}`}
-                                        className="w-full h-full object-cover hover:scale-105 transition-transform"
+                                        className="w-full h-auto hover:scale-105 transition-transform"
                                     />
                                 </div>
                             ))}
-                        </div>
-                        {images.length > 12 && (
-                            <p className="text-sm text-muted-foreground mt-2">
-                                Showing 12 of {images.length} images
-                            </p>
-                        )}
+                        </Masonry>
                     </section>
                 )}
             </div>
