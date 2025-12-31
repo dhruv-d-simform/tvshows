@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,6 +11,8 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from '@/components/ui/pagination';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
 import { ArrowLeft, ChevronUp } from 'lucide-react';
 import { useRecentlyVisitedShows } from '@/utils/recentlyVisited';
 import Masonry from 'react-masonry-css';
@@ -137,6 +139,8 @@ export function DetailsPage() {
     const [selectedSeasons, setSelectedSeasons] = useState<Season[]>([]);
     const [currentCastPage, setCurrentCastPage] = useState(1);
 
+    const expandedSeasonRef = useRef<HTMLDivElement>(null);
+
     const toggleSeason = (season: Season) => {
         setSelectedSeasons((prev) =>
             prev.some((s) => s.id === season.id)
@@ -144,6 +148,15 @@ export function DetailsPage() {
                 : [...prev, season]
         );
     };
+
+    useEffect(() => {
+        if (selectedSeasons.length > 0 && expandedSeasonRef.current) {
+            expandedSeasonRef.current.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+            });
+        }
+    }, [selectedSeasons]);
 
     useEffect(() => {
         if (posterImages.length > 1) {
@@ -305,6 +318,7 @@ export function DetailsPage() {
                                         <div
                                             key={season.id}
                                             className="col-span-full"
+                                            ref={expandedSeasonRef}
                                         >
                                             <div className="border rounded-lg p-4 bg-muted">
                                                 <div className="flex justify-between items-center mb-4 bg-secondary text-secondary-foreground p-2 rounded">
@@ -322,16 +336,19 @@ export function DetailsPage() {
                                                     </button>
                                                 </div>
                                                 <div className="flex gap-4 mb-4">
-                                                    {season.image?.medium && (
-                                                        <img
-                                                            src={
-                                                                season.image
-                                                                    .medium
-                                                            }
-                                                            alt={`Season ${season.number}`}
-                                                            className="w-20 h-28 object-cover rounded"
-                                                        />
-                                                    )}
+                                                    <img
+                                                        src={
+                                                            season.image
+                                                                ?.medium ||
+                                                            show.image
+                                                                ?.original ||
+                                                            show.image
+                                                                ?.medium ||
+                                                            '/placeholder.png'
+                                                        }
+                                                        alt={`Season ${season.number}`}
+                                                        className="w-20 h-28 object-cover rounded"
+                                                    />
                                                     <div className="flex-1">
                                                         {season.episodeOrder && (
                                                             <p className="text-sm text-muted-foreground mb-2">
@@ -361,7 +378,14 @@ export function DetailsPage() {
                                                         )
                                                         .map((episode) => {
                                                             const card = (
-                                                                <div className="shrink-0 w-64 border rounded">
+                                                                <div
+                                                                    className="shrink-0 w-64 border rounded h-full cursor-pointer"
+                                                                    data-tooltip-id="episode-tooltip"
+                                                                    data-tooltip-html={
+                                                                        episode.summary ||
+                                                                        ''
+                                                                    }
+                                                                >
                                                                     {episode
                                                                         .image
                                                                         ?.medium && (
@@ -439,13 +463,16 @@ export function DetailsPage() {
                                         className="cursor-pointer border rounded-lg hover:shadow-lg transition-shadow"
                                         onClick={() => toggleSeason(season)}
                                     >
-                                        {season.image?.medium && (
-                                            <img
-                                                src={season.image.medium}
-                                                alt={`Season ${season.number}`}
-                                                className="w-full aspect-2/3 object-cover rounded-t-lg"
-                                            />
-                                        )}
+                                        <img
+                                            src={
+                                                season.image?.medium ||
+                                                show.image?.original ||
+                                                show.image?.medium ||
+                                                '/placeholder.png'
+                                            }
+                                            alt={`Season ${season.number}`}
+                                            className="w-full aspect-2/3 object-cover rounded-t-lg"
+                                        />
                                         <div className="p-4 pt-2">
                                             <h3 className="font-semibold text-center text-xl">
                                                 Season {season.number}
@@ -594,6 +621,12 @@ export function DetailsPage() {
                     </section>
                 )}
             </div>
+            <Tooltip
+                id="episode-tooltip"
+                className="max-w-sm border rounded-md p-3 shadow-md"
+                style={{ backgroundColor: '#ffffff', color: '#000000' }}
+                place="top"
+            />
         </div>
     );
 }
