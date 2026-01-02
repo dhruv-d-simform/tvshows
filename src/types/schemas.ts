@@ -15,7 +15,8 @@ export const ImageSchema = z
     })
     .passthrough()
     .nullable()
-    .optional();
+    .optional()
+    .catch(null);
 
 /**
  * Rating schema - can be null or have null average
@@ -26,7 +27,8 @@ export const RatingSchema = z
     })
     .passthrough()
     .nullable()
-    .optional();
+    .optional()
+    .catch(null);
 
 /**
  * Externals schema
@@ -67,7 +69,8 @@ export const ImageWithResolutionsSchema = z
                     .passthrough()
                     .optional(),
             })
-            .passthrough(),
+            .passthrough()
+            .catch({}),
     })
     .passthrough();
 
@@ -78,7 +81,7 @@ export const PersonSchema = z
     .object({
         id: z.number(),
         name: z.string(),
-        image: ImageSchema.nullable(),
+        image: ImageSchema.nullable().catch(null),
     })
     .passthrough();
 
@@ -89,7 +92,7 @@ export const CharacterSchema = z
     .object({
         id: z.number(),
         name: z.string(),
-        image: ImageSchema.nullable(),
+        image: ImageSchema.nullable().catch(null),
     })
     .passthrough();
 
@@ -113,8 +116,8 @@ export const EpisodeSchema = z
         season: z.number(),
         number: z.number(),
         runtime: z.number().nullable().optional(),
-        rating: RatingSchema.nullable(),
-        image: ImageSchema.nullable(),
+        rating: RatingSchema.nullable().catch(null),
+        image: ImageSchema.nullable().catch(null),
         summary: z.string().nullable().optional(),
     })
     .passthrough();
@@ -129,7 +132,7 @@ export const SeasonSchema = z
         episodeOrder: z.number().nullable().optional(),
         premiereDate: z.string().optional(),
         endDate: z.string().optional(),
-        image: ImageSchema.nullable(),
+        image: ImageSchema.nullable().catch(null),
         summary: z.string().nullable().optional(),
     })
     .passthrough();
@@ -141,22 +144,57 @@ export const TVShowSchema = z
     .object({
         id: z.number(),
         name: z.string(),
-        genres: z.array(z.string()),
+        genres: z.array(z.string()).catch([]),
         language: z.string().nullable().optional(),
         premiered: z.string().nullable().optional(),
         ended: z.string().nullable().optional(),
-        rating: RatingSchema.nullable(),
-        image: ImageSchema.nullable(),
+        rating: RatingSchema.nullable().catch(null),
+        image: ImageSchema.nullable().catch(null),
         summary: z.string().nullable().optional(),
-        externals: ExternalsSchema,
+        externals: ExternalsSchema.catch({}),
         _embedded: z
             .object({
-                seasons: z.array(SeasonSchema).optional(),
-                cast: z.array(CastMemberSchema).optional(),
-                episodes: z.array(EpisodeSchema).optional(),
-                images: z.array(ImageWithResolutionsSchema).optional(),
+                seasons: z
+                    .array(z.any())
+                    .transform((arr) =>
+                        arr
+                            .map((item) => SeasonSchema.safeParse(item))
+                            .filter((result) => result.success)
+                            .map((result) => result.data)
+                    )
+                    .optional(),
+                cast: z
+                    .array(z.any())
+                    .transform((arr) =>
+                        arr
+                            .map((item) => CastMemberSchema.safeParse(item))
+                            .filter((result) => result.success)
+                            .map((result) => result.data)
+                    )
+                    .optional(),
+                episodes: z
+                    .array(z.any())
+                    .transform((arr) =>
+                        arr
+                            .map((item) => EpisodeSchema.safeParse(item))
+                            .filter((result) => result.success)
+                            .map((result) => result.data)
+                    )
+                    .optional(),
+                images: z
+                    .array(z.any())
+                    .transform((arr) =>
+                        arr
+                            .map((item) =>
+                                ImageWithResolutionsSchema.safeParse(item)
+                            )
+                            .filter((result) => result.success)
+                            .map((result) => result.data)
+                    )
+                    .optional(),
             })
             .passthrough()
+            .catch({})
             .optional(),
     })
     .passthrough();
