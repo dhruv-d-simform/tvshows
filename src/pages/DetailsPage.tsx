@@ -55,11 +55,34 @@ export function DetailsPage() {
         new Set()
     );
     const [currentPosterIndex, setCurrentPosterIndex] = useState(0);
+    const [isTransitioning, setIsTransitioning] = useState(true);
     const [castPage, setCastPage] = useState(0);
     const [hoveredCast, setHoveredCast] = useState<number | null>(null);
     const [hoveredEpisode, setHoveredEpisode] = useState<number | null>(null);
+    const [windowWidth, setWindowWidth] = useState(
+        typeof window !== 'undefined' ? window.innerWidth : 1024
+    );
 
-    const CAST_PER_PAGE = 12;
+    // Track window width for responsive pagination
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+            setCastPage(0); // Reset to first page on resize
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Calculate items per page based on screen size
+    // Grid: 4 cols (mobile), 6 cols (sm), 8 cols (md), 10 cols (lg)
+    const getItemsPerPage = () => {
+        if (windowWidth < 640) return 8; // 4 cols × 2 rows
+        if (windowWidth < 768) return 12; // 6 cols × 2 rows
+        if (windowWidth < 1024) return 16; // 8 cols × 2 rows
+        return 20; // 10 cols × 2 rows
+    };
+
+    const CAST_PER_PAGE = getItemsPerPage();
 
     // Add to recently visited when show data loads
     useEffect(() => {
@@ -72,19 +95,82 @@ export function DetailsPage() {
 
     // Cycle through poster images every 3 seconds
     useEffect(() => {
-        if (!show?._embedded?.images) return;
+        if (!show) return;
 
-        const posters = show._embedded.images.filter(
-            (img) => img.type === 'poster'
-        );
-        if (posters.length <= 1) return;
+        // Collect all available posters
+        const allPosters: string[] = [];
+
+        // Add main poster first if available
+        if (show.image?.original) {
+            allPosters.push(show.image.original);
+        } else if (show.image?.medium) {
+            allPosters.push(show.image.medium);
+        }
+
+        // Add additional posters from images
+        if (show._embedded?.images) {
+            const posterImages = show._embedded.images
+                .filter((img) => img.type === 'poster')
+                .map(
+                    (img) =>
+                        img.resolutions?.original?.url ||
+                        img.resolutions?.medium?.url
+                )
+                .filter(
+                    (url): url is string => !!url && !allPosters.includes(url)
+                );
+
+            allPosters.push(...posterImages);
+        }
+
+        if (allPosters.length <= 1) return;
 
         const interval = setInterval(() => {
-            setCurrentPosterIndex((prev) => (prev + 1) % posters.length);
+            setIsTransitioning(true);
+            setCurrentPosterIndex((prev) => prev + 1);
         }, 3000);
 
         return () => clearInterval(interval);
     }, [show]);
+
+    // Handle infinite loop reset
+    useEffect(() => {
+        if (!show) return;
+
+        // Collect all available posters
+        const allPosters: string[] = [];
+
+        if (show.image?.original) {
+            allPosters.push(show.image.original);
+        } else if (show.image?.medium) {
+            allPosters.push(show.image.medium);
+        }
+
+        if (show._embedded?.images) {
+            const posterImages = show._embedded.images
+                .filter((img) => img.type === 'poster')
+                .map(
+                    (img) =>
+                        img.resolutions?.original?.url ||
+                        img.resolutions?.medium?.url
+                )
+                .filter(
+                    (url): url is string => !!url && !allPosters.includes(url)
+                );
+
+            allPosters.push(...posterImages);
+        }
+
+        if (allPosters.length <= 1) return;
+
+        // When we reach the duplicate (last + 1), reset to index 1 without transition
+        if (currentPosterIndex === allPosters.length) {
+            setTimeout(() => {
+                setIsTransitioning(false);
+                setCurrentPosterIndex(0);
+            }, 1000); // Wait for transition to complete
+        }
+    }, [currentPosterIndex, show]);
 
     const handleBack = () => {
         if (window.history.length > 1) {
@@ -145,14 +231,29 @@ export function DetailsPage() {
 
     if (!show) return null;
 
-    const posters = show._embedded?.images?.filter(
-        (img) => img.type === 'poster'
-    );
-    const currentPoster = posters?.[currentPosterIndex];
-    const mainImageUrl =
-        currentPoster?.resolutions?.original?.url ||
-        show.image?.original ||
-        show.image?.medium;
+    // Collect all available posters for cycling
+    const allPosters: string[] = [];
+
+    // Add main poster first if available
+    if (show.image?.original) {
+        allPosters.push(show.image.original);
+    } else if (show.image?.medium) {
+        allPosters.push(show.image.medium);
+    }
+
+    // Add additional posters from images
+    if (show._embedded?.images) {
+        const posterImages = show._embedded.images
+            .filter((img) => img.type === 'poster')
+            .map(
+                (img) =>
+                    img.resolutions?.original?.url ||
+                    img.resolutions?.medium?.url
+            )
+            .filter((url): url is string => !!url && !allPosters.includes(url));
+
+        allPosters.push(...posterImages);
+    }
 
     const summary = stripHtml(show.summary);
     const episodesBySeason = groupEpisodesBySeason(show._embedded?.episodes);
@@ -170,18 +271,6 @@ export function DetailsPage() {
 
     return (
         <div className="min-h-screen bg-gray-900">
-            {/* Back Button */}
-            <div className="container mx-auto px-4 py-6">
-                <button
-                    onClick={handleBack}
-                    className="flex items-center gap-2 text-white transition-colors hover:text-blue-400"
-                    aria-label="Go back"
-                >
-                    <ArrowLeft className="h-5 w-5" />
-                    <span>Back</span>
-                </button>
-            </div>
-
             {/* Hero Section with Background */}
             <div
                 className="relative bg-cover bg-center"
@@ -193,18 +282,51 @@ export function DetailsPage() {
                 }}
             >
                 <div className="container mx-auto px-4 py-8">
+                    {/* Back Button - Inside hero section */}
+                    <button
+                        onClick={handleBack}
+                        className="mb-6 flex items-center gap-2 text-white transition-colors hover:text-blue-400"
+                        aria-label="Go back"
+                    >
+                        <ArrowLeft className="h-5 w-5" />
+                        <span>Back</span>
+                    </button>
                     {/* Main Info - Side by side on large, stacked on small */}
                     <div className="grid gap-8 md:grid-cols-[300px_1fr]">
-                        {/* Main Poster with cycling */}
+                        {/* Main Poster with cycling carousel */}
                         <div className="flex justify-center md:justify-start">
-                            {mainImageUrl ? (
-                                <div className="relative overflow-hidden rounded-lg shadow-2xl">
-                                    <img
-                                        key={currentPosterIndex}
-                                        src={mainImageUrl}
-                                        alt={show.name}
-                                        className="h-auto w-full max-w-sm transition-opacity duration-500"
-                                    />
+                            {allPosters.length > 0 ? (
+                                <div className="relative h-112.5 w-full max-w-sm overflow-hidden rounded-lg shadow-2xl">
+                                    <div
+                                        className="flex h-full"
+                                        style={{
+                                            transform: `translateX(-${currentPosterIndex * 100}%)`,
+                                            transition: isTransitioning
+                                                ? 'transform 300ms ease-in-out'
+                                                : 'none',
+                                        }}
+                                    >
+                                        {allPosters.map((posterUrl, index) => (
+                                            <div
+                                                key={index}
+                                                className="h-full w-full shrink-0"
+                                            >
+                                                <img
+                                                    src={posterUrl}
+                                                    alt={`${show.name} - Poster ${index + 1}`}
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            </div>
+                                        ))}
+                                        {/* Duplicate first image for seamless loop */}
+                                        <div className="h-full w-full shrink-0">
+                                            <img
+                                                src={allPosters[0]}
+                                                alt={`${show.name} - Poster 1`}
+                                                className="h-full w-full object-cover"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="flex h-96 w-full max-w-sm items-center justify-center rounded-lg bg-gray-800 text-gray-400">
@@ -289,7 +411,7 @@ export function DetailsPage() {
                         <h2 className="mb-6 text-3xl font-bold text-white">
                             Seasons
                         </h2>
-                        <div className="space-y-4">
+                        <div className="flex flex-wrap gap-4">
                             {show._embedded.seasons.map((season) => {
                                 const isExpanded = expandedSeasons.has(
                                     season.number
@@ -307,9 +429,7 @@ export function DetailsPage() {
                                         key={season.id}
                                         id={`season-${season.number}`}
                                         className={
-                                            isExpanded
-                                                ? 'w-full'
-                                                : 'inline-block w-full md:w-auto'
+                                            isExpanded ? 'w-full' : 'w-64'
                                         }
                                     >
                                         {!isExpanded ? (
@@ -318,7 +438,7 @@ export function DetailsPage() {
                                                 onClick={() =>
                                                     toggleSeason(season.number)
                                                 }
-                                                className="inline-block w-64 cursor-pointer overflow-hidden rounded-lg border border-gray-700 bg-gray-800 transition-transform hover:scale-105"
+                                                className="w-full cursor-pointer overflow-hidden rounded-lg border border-gray-700 bg-gray-800 transition-transform hover:scale-105"
                                                 role="button"
                                                 tabIndex={0}
                                                 onKeyDown={(e) => {
@@ -441,7 +561,7 @@ export function DetailsPage() {
                                                                                 key={
                                                                                     episode.id
                                                                                 }
-                                                                                className="relative w-64 flex-shrink-0 overflow-hidden rounded-lg border border-gray-700 bg-gray-700"
+                                                                                className="relative w-64 shrink-0 overflow-hidden rounded-lg border border-gray-700 bg-gray-700"
                                                                                 onMouseEnter={() =>
                                                                                     setHoveredEpisode(
                                                                                         episode.id
@@ -558,7 +678,7 @@ export function DetailsPage() {
                         <h2 className="mb-6 text-3xl font-bold text-white">
                             Cast
                         </h2>
-                        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                        <div className="grid grid-cols-4 gap-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10">
                             {paginatedCast.map((member) => {
                                 const isHovered =
                                     hoveredCast === member.person.id;
@@ -581,7 +701,7 @@ export function DetailsPage() {
                                             setHoveredCast(null)
                                         }
                                     >
-                                        <div className="mb-2 aspect-square overflow-hidden rounded-lg bg-gray-800">
+                                        <div className="mb-2 aspect-3/4 overflow-hidden rounded-lg bg-gray-800">
                                             {displayImage ? (
                                                 <img
                                                     src={displayImage}
@@ -601,7 +721,7 @@ export function DetailsPage() {
                                             )}
                                         </div>
                                         <p
-                                            className={`mb-1 text-sm text-white transition-all ${
+                                            className={`mb-0.5 text-xs text-white transition-all ${
                                                 isHovered
                                                     ? 'font-normal'
                                                     : 'font-semibold'
@@ -610,7 +730,7 @@ export function DetailsPage() {
                                             {member.person.name}
                                         </p>
                                         <p
-                                            className={`text-sm text-gray-400 transition-all ${
+                                            className={`text-xs text-gray-400 transition-all ${
                                                 isHovered
                                                     ? 'font-bold'
                                                     : 'font-normal'
