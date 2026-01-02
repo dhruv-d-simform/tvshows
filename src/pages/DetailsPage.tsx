@@ -550,12 +550,28 @@ export function DetailsPage() {
                                             className="w-full h-full object-cover absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                                         />
                                     </div>
-                                    <p className="font-semibold text-sm group-hover:font-normal">
-                                        {member.person.name}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground group-hover:font-bold group-hover:text-foreground">
-                                        {member.character.name}
-                                    </p>
+                                    <div className="relative text-sm">
+                                        <span className="font-bold invisible">
+                                            {member.person.name}
+                                        </span>
+                                        <span className="font-semibold absolute inset-0 group-hover:hidden">
+                                            {member.person.name}
+                                        </span>
+                                        <span className="font-normal absolute inset-0 hidden group-hover:block">
+                                            {member.person.name}
+                                        </span>
+                                    </div>
+                                    <div className="relative text-xs">
+                                        <span className="font-bold invisible">
+                                            {member.character.name}
+                                        </span>
+                                        <span className="text-muted-foreground absolute inset-0 group-hover:hidden">
+                                            {member.character.name}
+                                        </span>
+                                        <span className="font-bold text-foreground absolute inset-0 hidden group-hover:block">
+                                            {member.character.name}
+                                        </span>
+                                    </div>
                                 </div>
                             ))}
                         </div>
