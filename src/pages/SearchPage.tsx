@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { SearchBar } from '@/components/SearchBar';
+import { Header } from '@/components/Header';
 import { ShowCard } from '@/components/ShowCard';
 import { useSearchShows } from '@/api/search';
 
@@ -38,18 +38,17 @@ export function SearchPage() {
 
     return (
         <div className="min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900">
+            {/* Header with Search */}
+            <Header initialQuery={searchQuery} onSearch={handleSearch} />
+
+            {/* Main Content */}
             <div className="container mx-auto px-4 py-8">
-                {/* Header */}
-                <header className="mb-8 text-center">
-                    <h1 className="mb-4 text-4xl font-bold text-white">
-                        TV Show Search
+                {/* Page Title */}
+                <header className="mb-8">
+                    <h1 className="mb-2 text-3xl font-bold text-white">
+                        Search Results
+                        {searchQuery && ` for "${searchQuery}"`}
                     </h1>
-                    <div className="flex justify-center">
-                        <SearchBar
-                            onSearch={handleSearch}
-                            initialQuery={searchQuery}
-                        />
-                    </div>
                 </header>
 
                 {/* Search Results */}

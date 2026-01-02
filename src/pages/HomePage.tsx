@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { Header } from '@/components/Header';
 import { ShowCard } from '@/components/ShowCard';
 import {
     getRecentlyVisitedShows,
@@ -47,10 +48,14 @@ export function HomePage() {
 
     return (
         <div className="min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-gray-900">
+            {/* Header with Search */}
+            <Header />
+
+            {/* Main Content */}
             <div className="container mx-auto px-4 py-8">
-                {/* Header */}
+                {/* Page Title */}
                 <header className="mb-8">
-                    <h1 className="mb-2 text-4xl font-bold text-white">
+                    <h1 className="mb-2 text-3xl font-bold text-white">
                         Recently Visited Shows
                     </h1>
                     <p className="text-gray-400">

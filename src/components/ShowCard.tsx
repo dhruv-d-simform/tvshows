@@ -13,22 +13,6 @@ interface ShowCardProps {
     showRemoveButton?: boolean;
 }
 
-/**
- * Strip HTML tags from summary text
- */
-function stripHtml(html: string | null | undefined): string {
-    if (!html) return '';
-    return html.replace(/<[^>]*>/g, '');
-}
-
-/**
- * Truncate text to specified length
- */
-function truncate(text: string, maxLength: number): string {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength).trim() + '...';
-}
-
 export function ShowCard({
     show,
     onNavigate,
@@ -46,8 +30,7 @@ export function ShowCard({
         }
     };
 
-    const imageUrl = show.image?.medium || show.image?.original;
-    const summary = stripHtml(show.summary);
+    const imageUrl = show.image?.original || show.image?.medium;
     const rating = show.rating?.average;
 
     return (
@@ -91,45 +74,37 @@ export function ShowCard({
                 )}
             </div>
 
-            {/* Content */}
-            <div className="p-4">
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {/* Content - Each detail on new line */}
+            <div className="p-4 space-y-1">
+                {/* Title */}
+                <h3 className="truncate text-lg font-semibold text-gray-900 dark:text-gray-100">
                     {show.name}
                 </h3>
 
-                {/* Metadata */}
-                <div className="mb-2 flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                    {rating && (
-                        <span className="rounded-full bg-yellow-100 px-2 py-0.5 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                            ★ {rating}
-                        </span>
-                    )}
-                    {show.premiered && (
-                        <span>{new Date(show.premiered).getFullYear()}</span>
-                    )}
-                    {show.language && <span>{show.language}</span>}
-                </div>
+                {/* Year */}
+                {show.premiered && (
+                    <p className="truncate text-sm text-gray-600 dark:text-gray-400">
+                        {new Date(show.premiered).getFullYear()}
+                    </p>
+                )}
 
                 {/* Genres */}
                 {show.genres && show.genres.length > 0 && (
-                    <div className="mb-2 flex flex-wrap gap-1">
-                        {show.genres.slice(0, 3).map((genre) => (
-                            <span
-                                key={genre}
-                                className="rounded-md bg-gray-100 px-2 py-0.5 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-                            >
-                                {genre}
-                            </span>
-                        ))}
-                    </div>
-                )}
-
-                {/* Summary */}
-                {summary && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {truncate(summary, 120)}
+                    <p className="truncate text-sm text-gray-600 dark:text-gray-400">
+                        {show.genres.join(', ')}
                     </p>
                 )}
+
+                {/* Rating and Language on same line */}
+                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                    {rating && (
+                        <span className="flex items-center gap-1">
+                            <span className="text-yellow-400">★</span>
+                            {rating}
+                        </span>
+                    )}
+                    {show.language && <span>{show.language}</span>}
+                </div>
             </div>
         </div>
     );
