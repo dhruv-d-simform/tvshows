@@ -127,7 +127,7 @@ export function SeasonCard({
                         <h4 className="mb-4 text-xl font-semibold text-card-foreground">
                             Episodes
                         </h4>
-                        <div className="overflow-x-auto">
+                        <div className="overflow-x-auto scrollbar-minimal">
                             <div className="flex gap-4 pb-4">
                                 {episodes.map((episode) => (
                                     <EpisodeCard
