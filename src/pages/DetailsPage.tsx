@@ -138,6 +138,7 @@ export function DetailsPage() {
     const [currentPosterIndex, setCurrentPosterIndex] = useState(0);
     const [selectedSeasons, setSelectedSeasons] = useState<Season[]>([]);
     const [currentCastPage, setCurrentCastPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(30);
 
     const expandedSeasonRef = useRef<HTMLDivElement>(null);
 
@@ -169,6 +170,28 @@ export function DetailsPage() {
         }
     }, [posterImages.length]);
 
+    // Calculate items per page based on screen size to ensure full rows
+    useEffect(() => {
+        const calculateItemsPerPage = () => {
+            const width = window.innerWidth;
+            let cols = 10; // xl: default
+            if (width < 640)
+                cols = 3; // mobile
+            else if (width < 1024)
+                cols = 6; // md
+            else if (width < 1280) cols = 8; // lg
+
+            // Show 3-4 rows worth of items
+            const rows = 2;
+            setItemsPerPage(cols * rows);
+        };
+
+        calculateItemsPerPage();
+        window.addEventListener('resize', calculateItemsPerPage);
+        return () =>
+            window.removeEventListener('resize', calculateItemsPerPage);
+    }, []);
+
     if (showLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -195,7 +218,6 @@ export function DetailsPage() {
 
     const year = show.premiered ? new Date(show.premiered).getFullYear() : null;
 
-    const itemsPerPage = 12;
     const totalCastPages = Math.ceil(cast.length / itemsPerPage);
     const currentCast = cast.slice(
         (currentCastPage - 1) * itemsPerPage,
@@ -503,20 +525,20 @@ export function DetailsPage() {
                 {cast.length > 0 && (
                     <section className="mt-8">
                         <h2 className="text-2xl font-semibold mb-4">Cast</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-6">
                             {currentCast.map((member, index) => (
                                 <div
                                     key={index}
                                     className="text-center group cursor-pointer"
                                 >
-                                    <div className="relative w-20 h-20 mx-auto mb-2">
+                                    <div className="relative w-full aspect-2/3 mb-2 overflow-hidden rounded-lg">
                                         <img
                                             src={
                                                 member.person.image?.medium ||
                                                 '/placeholder.png'
                                             }
                                             alt={member.person.name}
-                                            className="w-20 h-20 rounded-full object-cover absolute inset-0 group-hover:opacity-0 transition-opacity duration-200"
+                                            className="w-full h-full object-cover absolute inset-0 group-hover:opacity-0 transition-opacity duration-200"
                                         />
                                         <img
                                             src={
@@ -525,7 +547,7 @@ export function DetailsPage() {
                                                 '/placeholder.png'
                                             }
                                             alt={member.character.name}
-                                            className="w-20 h-20 rounded-full object-cover absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                            className="w-full h-full object-cover absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                                         />
                                     </div>
                                     <p className="font-semibold text-sm group-hover:font-normal">
