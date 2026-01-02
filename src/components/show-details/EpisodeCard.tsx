@@ -21,9 +21,9 @@ export function EpisodeCard({ episode }: EpisodeCardProps) {
     return (
         <HoverCard>
             <HoverCardTrigger asChild>
-                <div className="relative w-64 shrink-0 cursor-pointer overflow-hidden rounded-lg border border-gray-700 bg-gray-700">
+                <div className="relative w-64 shrink-0 cursor-pointer overflow-hidden rounded-lg border border-border bg-card">
                     {/* Episode Image */}
-                    <div className="aspect-video overflow-hidden bg-gray-600">
+                    <div className="aspect-video overflow-hidden bg-muted">
                         {episodeImageUrl ? (
                             <img
                                 src={episodeImageUrl}
@@ -32,7 +32,7 @@ export function EpisodeCard({ episode }: EpisodeCardProps) {
                                 loading="lazy"
                             />
                         ) : (
-                            <div className="flex h-full items-center justify-center text-sm text-gray-500">
+                            <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
                                 No image
                             </div>
                         )}
@@ -40,10 +40,10 @@ export function EpisodeCard({ episode }: EpisodeCardProps) {
 
                     {/* Episode Info */}
                     <div className="p-3">
-                        <h5 className="mb-2 truncate font-semibold text-white">
+                        <h5 className="mb-2 truncate font-semibold text-card-foreground">
                             {episode.name}
                         </h5>
-                        <div className="flex items-center gap-2 text-xs text-gray-400">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <span>Ep {episode.number}</span>
                             {episode.runtime && (
                                 <>
@@ -68,13 +68,13 @@ export function EpisodeCard({ episode }: EpisodeCardProps) {
                 <HoverCardContent
                     side="top"
                     align="start"
-                    className="w-80 bg-gray-800 border-gray-600"
+                    className="w-80 bg-popover border-border"
                 >
                     <div className="space-y-2">
-                        <h4 className="font-semibold text-white">
+                        <h4 className="font-semibold text-popover-foreground">
                             {episode.name}
                         </h4>
-                        <p className="text-sm text-gray-300">
+                        <p className="text-sm text-muted-foreground">
                             {stripHtml(episode.summary)}
                         </p>
                     </div>

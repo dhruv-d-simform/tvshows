@@ -35,7 +35,7 @@ export function ShowCard({
 
     return (
         <div
-            className="group relative cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md transition-all hover:shadow-xl dark:border-gray-700 dark:bg-gray-800"
+            className="group relative cursor-pointer overflow-hidden rounded-lg border border-border bg-card shadow-md transition-all hover:shadow-xl"
             onClick={handleClick}
             role="button"
             tabIndex={0}
@@ -59,7 +59,7 @@ export function ShowCard({
             )}
 
             {/* Image */}
-            <div className="aspect-2/3 overflow-hidden bg-gray-100 dark:bg-gray-700">
+            <div className="aspect-2/3 overflow-hidden bg-muted">
                 {imageUrl ? (
                     <img
                         src={imageUrl}
@@ -68,7 +68,7 @@ export function ShowCard({
                         loading="lazy"
                     />
                 ) : (
-                    <div className="flex h-full items-center justify-center text-gray-400">
+                    <div className="flex h-full items-center justify-center text-muted-foreground">
                         <span className="text-sm">No image</span>
                     </div>
                 )}
@@ -77,26 +77,26 @@ export function ShowCard({
             {/* Content - Each detail on new line */}
             <div className="p-4 space-y-1">
                 {/* Title */}
-                <h3 className="truncate text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <h3 className="truncate text-lg font-semibold text-card-foreground">
                     {show.name}
                 </h3>
 
                 {/* Year */}
                 {show.premiered && (
-                    <p className="truncate text-sm text-gray-600 dark:text-gray-400">
+                    <p className="truncate text-sm text-muted-foreground">
                         {new Date(show.premiered).getFullYear()}
                     </p>
                 )}
 
                 {/* Genres */}
                 {show.genres && show.genres.length > 0 && (
-                    <p className="truncate text-sm text-gray-600 dark:text-gray-400">
+                    <p className="truncate text-sm text-muted-foreground">
                         {show.genres.join(', ')}
                     </p>
                 )}
 
                 {/* Rating and Language on same line */}
-                <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     {rating && (
                         <span className="flex items-center gap-1">
                             <span className="text-yellow-400">★</span>

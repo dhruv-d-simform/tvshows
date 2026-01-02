@@ -54,9 +54,11 @@ export function HeroSection({ show, onBack }: HeroSectionProps) {
             className="relative bg-cover bg-center"
             style={{
                 backgroundImage: backgroundImage
-                    ? `linear-gradient(to bottom, rgba(17, 24, 39, 0.7), rgba(17, 24, 39, 0.95)), url(${backgroundImage})`
+                    ? `linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.95)), url(${backgroundImage})`
                     : undefined,
-                backgroundColor: !backgroundImage ? '#111827' : undefined,
+                backgroundColor: !backgroundImage
+                    ? 'var(--background)'
+                    : undefined,
             }}
         >
             <div className="container mx-auto px-4 py-8">
@@ -64,7 +66,7 @@ export function HeroSection({ show, onBack }: HeroSectionProps) {
                 <Button
                     onClick={onBack}
                     variant="ghost"
-                    className="mb-6 text-white hover:bg-white/10 hover:text-blue-400"
+                    className="mb-6 text-foreground hover:bg-background/20 hover:text-primary"
                 >
                     <ArrowLeft className="mr-2 h-5 w-5" />
                     Back
@@ -108,20 +110,20 @@ export function HeroSection({ show, onBack }: HeroSectionProps) {
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex h-96 w-full max-w-sm items-center justify-center rounded-lg bg-gray-800 text-gray-400">
+                            <div className="flex h-96 w-full max-w-sm items-center justify-center rounded-lg bg-muted text-muted-foreground">
                                 No image available
                             </div>
                         )}
                     </div>
 
                     {/* Show Info */}
-                    <div className="text-white">
+                    <div className="text-foreground">
                         <h1 className="mb-4 text-4xl font-bold md:text-5xl">
                             {show.name}
                         </h1>
 
                         {/* Metadata */}
-                        <div className="mb-6 flex flex-wrap items-center gap-4 text-gray-300">
+                        <div className="mb-6 flex flex-wrap items-center gap-4 text-muted-foreground">
                             {show.rating?.average && (
                                 <div className="flex items-center gap-1">
                                     <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
@@ -144,7 +146,11 @@ export function HeroSection({ show, onBack }: HeroSectionProps) {
                         {show.genres && show.genres.length > 0 && (
                             <div className="mb-6 flex flex-wrap gap-2">
                                 {show.genres.map((genre) => (
-                                    <Badge key={genre} variant="default">
+                                    <Badge
+                                        key={genre}
+                                        variant="default"
+                                        className="bg-white text-black"
+                                    >
                                         {genre}
                                     </Badge>
                                 ))}
@@ -157,7 +163,7 @@ export function HeroSection({ show, onBack }: HeroSectionProps) {
                                 <h2 className="mb-2 text-2xl font-semibold">
                                     Synopsis
                                 </h2>
-                                <p className="leading-relaxed text-gray-300">
+                                <p className="leading-relaxed text-muted-foreground">
                                     {summary}
                                 </p>
                             </div>
@@ -165,7 +171,7 @@ export function HeroSection({ show, onBack }: HeroSectionProps) {
 
                         {/* External Links */}
                         {show.externals?.imdb && (
-                            <Button asChild variant="default">
+                            <Button className="bg-white text-black">
                                 <a
                                     href={`https://www.imdb.com/title/${show.externals.imdb}`}
                                     target="_blank"

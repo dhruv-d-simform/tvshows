@@ -54,9 +54,11 @@ export function CastSection({ show }: CastSectionProps) {
     if (cast.length === 0) return null;
 
     return (
-        <section className="border-t border-gray-800 bg-gray-900 py-12">
+        <section className="border-t border-border bg-background py-12">
             <div className="container mx-auto px-4">
-                <h2 className="mb-6 text-3xl font-bold text-white">Cast</h2>
+                <h2 className="mb-6 text-3xl font-bold text-foreground">
+                    Cast
+                </h2>
                 <div className="grid grid-cols-4 gap-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10">
                     {paginatedCast.map((member) => (
                         <CastMemberCard

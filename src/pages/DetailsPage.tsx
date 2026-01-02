@@ -43,7 +43,7 @@ export function DetailsPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gray-900 p-6">
+            <div className="min-h-screen p-6">
                 <div className="mx-auto max-w-7xl space-y-6">
                     {/* Hero skeleton */}
                     <Skeleton className="h-[500px] w-full rounded-lg bg-gray-800" />
@@ -67,7 +67,7 @@ export function DetailsPage() {
 
     if (isError) {
         return (
-            <div className="flex min-h-screen items-center justify-center bg-gray-900 p-6">
+            <div className="flex min-h-screen items-center justify-center p-6">
                 <div className="w-full max-w-md space-y-4 text-center">
                     <Alert variant="destructive">
                         <AlertDescription>
@@ -88,7 +88,7 @@ export function DetailsPage() {
     if (!show) return null;
 
     return (
-        <div className="min-h-screen bg-gray-900">
+        <div className="min-h-screen">
             <HeroSection show={show} onBack={handleBack} />
             <SeasonsSection show={show} />
             <CastSection show={show} />

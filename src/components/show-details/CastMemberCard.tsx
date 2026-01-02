@@ -25,7 +25,7 @@ export function CastMemberCard({ member }: CastMemberCardProps) {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <div className="mb-2 aspect-3/4 overflow-hidden rounded-lg bg-gray-800">
+            <div className="mb-2 aspect-3/4 overflow-hidden rounded-lg bg-muted">
                 {displayImage ? (
                     <img
                         src={displayImage}
@@ -38,20 +38,20 @@ export function CastMemberCard({ member }: CastMemberCardProps) {
                         loading="lazy"
                     />
                 ) : (
-                    <div className="flex h-full items-center justify-center text-gray-500">
+                    <div className="flex h-full items-center justify-center text-muted-foreground">
                         No image
                     </div>
                 )}
             </div>
             <p
-                className={`mb-0.5 text-xs text-white transition-all ${
+                className={`mb-0.5 text-xs text-foreground transition-all ${
                     isHovered ? 'font-normal' : 'font-semibold'
                 }`}
             >
                 {member.person.name}
             </p>
             <p
-                className={`text-xs text-gray-400 transition-all ${
+                className={`text-xs text-muted-foreground transition-all ${
                     isHovered ? 'font-bold' : 'font-normal'
                 }`}
             >

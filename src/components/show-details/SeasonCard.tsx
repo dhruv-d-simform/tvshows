@@ -34,7 +34,7 @@ export function SeasonCard({
         return (
             <div className="w-64">
                 <div
-                    className="w-full cursor-pointer overflow-hidden rounded-lg border border-gray-700 bg-gray-800 transition-transform hover:scale-105"
+                    className="w-full cursor-pointer overflow-hidden rounded-lg border border-border bg-card transition-transform hover:scale-105"
                     onClick={onToggle}
                     role="button"
                     tabIndex={0}
@@ -45,7 +45,7 @@ export function SeasonCard({
                         }
                     }}
                 >
-                    <div className="aspect-2/3 overflow-hidden bg-gray-700">
+                    <div className="aspect-2/3 overflow-hidden bg-muted">
                         {seasonImageUrl ? (
                             <img
                                 src={seasonImageUrl}
@@ -54,16 +54,16 @@ export function SeasonCard({
                                 loading="lazy"
                             />
                         ) : (
-                            <div className="flex h-full items-center justify-center text-gray-500">
+                            <div className="flex h-full items-center justify-center text-muted-foreground">
                                 No image
                             </div>
                         )}
                     </div>
                     <div className="p-4">
-                        <h3 className="mb-1 font-semibold text-white">
+                        <h3 className="mb-1 font-semibold text-card-foreground">
                             Season {season.number}
                         </h3>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-muted-foreground">
                             {episodes.length} Episodes
                         </p>
                     </div>
@@ -75,16 +75,16 @@ export function SeasonCard({
     // Expanded State - Full Season Details
     return (
         <div className="w-full">
-            <div className="w-full rounded-lg border border-gray-700 bg-gray-800 p-6">
+            <div className="w-full rounded-lg border border-border bg-card p-6">
                 {/* Header */}
                 <div className="mb-6 flex items-center justify-between">
-                    <h3 className="text-2xl font-bold text-white">
+                    <h3 className="text-2xl font-bold text-card-foreground">
                         Season {season.number} Details
                     </h3>
                     <Button
                         onClick={onToggle}
                         variant="ghost"
-                        className="text-blue-400 hover:bg-blue-400/10 hover:text-blue-300"
+                        className="text-primary hover:bg-primary/10 hover:text-primary"
                     >
                         Collapse
                         <ChevronUp className="ml-2 h-5 w-5" />
@@ -94,7 +94,7 @@ export function SeasonCard({
                 {/* Season Info */}
                 <div className="mb-6 grid gap-6 md:grid-cols-[200px_1fr]">
                     {/* Season Image */}
-                    <div className="overflow-hidden rounded-lg bg-gray-700">
+                    <div className="overflow-hidden rounded-lg bg-muted">
                         {seasonImageUrl ? (
                             <img
                                 src={seasonImageUrl}
@@ -102,19 +102,19 @@ export function SeasonCard({
                                 className="h-auto w-full"
                             />
                         ) : (
-                            <div className="flex h-48 items-center justify-center text-gray-500">
+                            <div className="flex h-48 items-center justify-center text-muted-foreground">
                                 No image
                             </div>
                         )}
                     </div>
 
                     {/* Season Details */}
-                    <div className="text-white">
+                    <div className="text-card-foreground">
                         <p className="mb-2 text-lg">
                             {episodes.length} Episodes
                         </p>
                         {season.summary && (
-                            <p className="text-gray-300">
+                            <p className="text-muted-foreground">
                                 {stripHtml(season.summary)}
                             </p>
                         )}
@@ -124,7 +124,7 @@ export function SeasonCard({
                 {/* Episodes List */}
                 {episodes.length > 0 && (
                     <div>
-                        <h4 className="mb-4 text-xl font-semibold text-white">
+                        <h4 className="mb-4 text-xl font-semibold text-card-foreground">
                             Episodes
                         </h4>
                         <div className="overflow-x-auto">

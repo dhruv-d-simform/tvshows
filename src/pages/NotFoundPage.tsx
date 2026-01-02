@@ -11,7 +11,7 @@ export function NotFoundPage() {
     const navigate = useNavigate();
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-gray-900">
+        <div className="flex min-h-screen items-center justify-center">
             <div className="text-center">
                 <h1 className="mb-4 text-9xl font-bold text-blue-500">404</h1>
                 <h2 className="mb-4 text-3xl font-semibold text-white">
