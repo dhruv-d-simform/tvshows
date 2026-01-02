@@ -29,11 +29,11 @@ Details page will show all the details about a perticular show.
 This page will not have any site header or search bar. Only the main content of the show will be there.
 This details page will show information about a show, which includes :
 
-- Main information : main poster, title, genres, language, year, rating, imdb link, summary.
-- Seasons information : data, image, no. of episodes, summary.
-- Episodes information in each season : name, image, runtime, rating, summary.
-- Casts information : person name, character name, person image, character image.
-- Images : posters, backgrounds
+-   Main information : main poster, title, genres, language, year, rating, imdb link, summary.
+-   Seasons information : data, image, no. of episodes, summary.
+-   Episodes information in each season : name, image, runtime, rating, summary.
+-   Casts information : person name, character name, person image, character image.
+-   Images : posters, backgrounds
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -53,23 +53,23 @@ A user enters a search term and sees a list of TV shows matching the term in a g
 
 **UI Implementation Details**:
 
-- The search bar should be placed inside the site header at the top of both home and search pages.
-- The site header should remain sticky while scrolling the main content.
-- The content area should display results in a responsive grid layout that adapts to different screen sizes.
-- Each card in the main area grid should include:
-    - Poster image (original resolution if available, medium as fallback)
-    - Show title
-    - Year of premiere (if available)
-    - Genres (comma-separated, if available)
-    - Average rating (if available)
-    - Language of the show
-- For the UI of each card,
-    - The layout should be vertical with the poster image on top and text details below.
-    - The poster image should stretch to fit the card width while maintaining aspect ratio.
-    - Text details should be truncated with ellipsis if they exceed the card width.
-    - Each text detail should be in a new line.
-    - Only Rating and language should be shown in a single line.
-    - Each card should have a proper border and subtle background color to distinguish it from the page background.
+-   The search bar should be placed inside the site header at the top of both home and search pages.
+-   The site header should remain sticky while scrolling the main content.
+-   The content area should display results in a responsive grid layout that adapts to different screen sizes.
+-   Each card in the main area grid should include:
+    -   Poster image (original resolution if available, medium as fallback)
+    -   Show title
+    -   Year of premiere (if available)
+    -   Genres (comma-separated, if available)
+    -   Average rating (if available)
+    -   Language of the show
+-   For the UI of each card,
+    -   The layout should be vertical with the poster image on top and text details below.
+    -   The poster image should stretch to fit the card width while maintaining aspect ratio.
+    -   Text details should be truncated with ellipsis if they exceed the card width.
+    -   Each text detail should be in a new line.
+    -   Only Rating and language should be shown in a single line.
+    -   Each card should have a proper border and subtle background color to distinguish it from the page background.
 
 ---
 
@@ -93,9 +93,9 @@ If a user visits a show that is already in the recently visited list, the old en
 
 **UI Implementation Details**:
 
-- For the cards in the home page (recently visited shows),
-    - A small cross (remove) icon should be placed at the top-right corner of each card.
-    - The arrow should be visible over the poster image without obstructing any content.
+-   For the cards in the home page (recently visited shows),
+    -   A small cross (remove) icon should be placed at the top-right corner of each card.
+    -   The arrow should be visible over the poster image without obstructing any content.
 
 ---
 
@@ -124,101 +124,108 @@ The details page includes a back button. Clicking the back button navigates the 
 
 **UI Implementation Details**:
 
-- The details page should not have a site header or search bar.
-- The details page will have a back button at the top-left corner to navigate back.
-- The details page will display (in order):
-    - Main poster
-    - Show info : Title, year, genres, language, rating, IMDb link, summary
-    - Seasons: Grid of cards, each showing season image, season number ("Season X"), episode count.
-    - Cast: grid of cast members with pagination showing image, person name, character name.
-    - Images : Mesonry layout of all images (posters, backgrounds).
-- Main poster and Show info should be shown side by side on larger screens, stacked on smaller screens.
-- Each card in the seasons grid should contain:
-    - Season image (Stratching to fit card width, fallback to show main poster if missing)
-    - Season number ("Season X")
-    - Episode count ("Y Episodes")
-- For each expanded season card:
-    - It should have a main header with title ("Season X Details") and a collapse button (Up arrow) at the right end side.
-    - Below the header, it should show season image (on the left) and on the right side, it should show:
-        - Episode count ("Y Episodes")
-        - Summary
-    - Below that, it should list all episodes in a horizontal scrollable list of cards.
-    - Each episode card should contain:
-        - Episode image (Stretching to fit card width, landscape aspect ratio)
-        - Episode name
-        - Episode number ("Ep X")
-        - Runtime ("X mins")
-        - Rating
-    - For episode card, Episode number, runtime, rating should be shown in a single line, seperated by centred dots.
-- For the cast section:
-    - It should show a grid of cast members with pagination controls below.
-    - Each cast member card should contain:
-        - Person image (circular)
-        - Person name
-        - Character name
-    - On hovering over a cast member card, the person image should be replaced with character image, character name should become bold, and person name should become normal weight. On mouse leave, it should revert back to original state.
-- For the images section:
-    - It should use a masonry layout to display all images (posters, backgrounds).
-- Original images should be used wherever available for better quality.
+-   The details page should not have a site header or search bar.
+-   The details page will have a back button at the top-left corner to navigate back.
+-   The details page will display (in order):
+    -   Main poster
+    -   Show info : Title, year, genres, language, rating, IMDb link, summary
+    -   Seasons: Grid of cards, each showing season image, season number ("Season X"), episode count.
+    -   Cast: grid of cast members with pagination showing image, person name, character name.
+    -   Images : Mesonry layout of all images (posters, backgrounds).
+-   Main poster and Show info should be shown side by side on larger screens, stacked on smaller screens.
+-   Each card in the seasons grid should contain:
+    -   Season image (Stratching to fit card width, fallback to show main poster if missing)
+    -   Season number ("Season X")
+    -   Episode count ("Y Episodes")
+-   For each expanded season card:
+    -   It should have a main header with title ("Season X Details") and a collapse button (Up arrow) at the right end side.
+    -   Below the header, it should show season image (on the left) and on the right side, it should show:
+        -   Episode count ("Y Episodes")
+        -   Summary
+    -   Below that, it should list all episodes in a horizontal scrollable list of cards.
+    -   Each episode card should contain:
+        -   Episode image (Stretching to fit card width, landscape aspect ratio)
+        -   Episode name
+        -   Episode number ("Ep X")
+        -   Runtime ("X mins")
+        -   Rating
+    -   For episode card, Episode number, runtime, rating should be shown in a single line, seperated by centred dots.
+-   For the cast section:
+    -   It should show a grid of cast members with pagination controls below.
+    -   The number of cast members per page should be adjusted based on the screen size to ensure optimal display.
+    -   Each cast member card should contain:
+        -   Person image (rounded corners)
+        -   Person name
+        -   Character name
+    -   On hovering over a cast member card, the person image should be replaced with character image, character name should become bold, and person name should become normal weight. On mouse leave, it should revert back to original state. No layout shift should occur.
+-   For the images section:
+    -   It should use a masonry layout to display all images (posters, backgrounds).
+-   Original images should be used wherever available for better quality.
 
 ---
 
 ### Edge Cases
 
-- What happens if the search returns no results? (Show a friendly message)
-- How does the system handle missing show data? (UI must not break, display only available info)
-- What if the user tries to access a details page for a non-existent show? (Show error or not found message)
+-   What happens if the search returns no results? (Show a friendly message)
+-   How does the system handle missing show data? (UI must not break, display only available info)
+-   What if the user tries to access a details page for a non-existent show? (Show error or not found message)
 
 ## Requirements _(mandatory)_
 
 ### Functional Requirements
 
-- **FR-001**: System MUST allow users to search for TV shows by term and display results in a grid.
-- **FR-002**: System MUST display recently visited shows on the home page in a grid format.
-- **FR-003**: System MUST allow navigation from search/home results to a show details page.
-- **FR-004**: System MUST display all available show details (images, info, cast, seasons, episodes) on the details page.
-- **FR-005**: System MUST handle missing data gracefully in all UI components.
-- **FR-006**: System MUST display friendly messages when no results or no recently visited shows are available.
-- **FR-007**: System MUST pre-populate the search bar on the search page with the last search term.
-- **FR-008**: System MUST update search results when a new term is entered and submitted on the search page.
+-   **FR-001**: System MUST allow users to search for TV shows by term and display results in a grid.
+-   **FR-002**: System MUST display recently visited shows on the home page in a grid format.
+-   **FR-003**: System MUST allow navigation from search/home results to a show details page.
+-   **FR-004**: System MUST display all available show details (images, info, cast, seasons, episodes) on the details page.
+-   **FR-005**: System MUST handle missing data gracefully in all UI components.
+-   **FR-006**: System MUST display friendly messages when no results or no recently visited shows are available.
+-   **FR-007**: System MUST pre-populate the search bar on the search page with the last search term.
+-   **FR-008**: System MUST update search results when a new term is entered and submitted on the search page.
 
 ### Key Entities
 
-- **Show**: Represents a TV show.
-    - Fields: id, name, language, genres (array), premiered, ended, rating (average), externals (imdb), image (medium, original), summary
-    - Embedded: seasons (array of Season), cast (array of Cast), episodes (array of Episode), images (array of Image)
+-   **Show**: Represents a TV show.
 
-- **Season**: Represents a season of a show.
-    - Fields: id, number, episodeOrder, premiereDate, endDate, image (medium, original), summary
+    -   Fields: id, name, language, genres (array), premiered, ended, rating (average), externals (imdb), image (medium, original), summary
+    -   Embedded: seasons (array of Season), cast (array of Cast), episodes (array of Episode), images (array of Image)
 
-- **Episode**: Represents an episode in a season.
-    - Fields: id, name, season, number, runtime, rating (average), image (medium, original), summary
+-   **Season**: Represents a season of a show.
 
-- **Person**: Represents a cast member.
-    - Fields: id, name, image (medium, original)
+    -   Fields: id, number, episodeOrder, premiereDate, endDate, image (medium, original), summary
 
-- **Character**: Represents a character played by a person.
-    - Fields: id, name, image (medium, original)
+-   **Episode**: Represents an episode in a season.
 
-- **Cast**: Represents a cast entry linking a person and a character.
-    - Fields: person (Person), character (Character)
+    -   Fields: id, name, season, number, runtime, rating (average), image (medium, original), summary
 
-- **Image**: Represents an image related to a show (e.g., poster, background, typography).
-    - Fields: id, type, main (boolean), resolutions (original, medium, with width/height), url
+-   **Person**: Represents a cast member.
+
+    -   Fields: id, name, image (medium, original)
+
+-   **Character**: Represents a character played by a person.
+
+    -   Fields: id, name, image (medium, original)
+
+-   **Cast**: Represents a cast entry linking a person and a character.
+
+    -   Fields: person (Person), character (Character)
+
+-   **Image**: Represents an image related to a show (e.g., poster, background, typography).
+    -   Fields: id, type, main (boolean), resolutions (original, medium, with width/height), url
 
 ## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
-- **SC-001**: Users can find and view details for any TV show in under 30 seconds.
-- **SC-002**: 95% of searches return results in under 2 seconds.
-- **SC-003**: 90% of users successfully complete a search and view a show details page on first attempt.
-- **SC-004**: No critical UI errors reported for missing or incomplete show data.
-- **SC-005**: User satisfaction with search and navigation is rated 4/5 or higher in user testing.
+-   **SC-001**: Users can find and view details for any TV show in under 30 seconds.
+-   **SC-002**: 95% of searches return results in under 2 seconds.
+-   **SC-003**: 90% of users successfully complete a search and view a show details page on first attempt.
+-   **SC-004**: No critical UI errors reported for missing or incomplete show data.
+-   **SC-005**: User satisfaction with search and navigation is rated 4/5 or higher in user testing.
 
 ## Assumptions
 
-- Search is case-insensitive and matches partial terms.
-- Recently visited shows are tracked locally per user/session.
-- All show data is available via a public API.
-- UI is responsive and works on desktop and mobile.
+-   Search is case-insensitive and matches partial terms.
+-   Recently visited shows are tracked locally per user/session.
+-   All show data is available via a public API.
+-   UI is responsive and works on desktop and mobile.

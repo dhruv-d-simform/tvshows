@@ -24,14 +24,14 @@ Technical approach: The app will be a Vite+React SPA in TypeScript, styled with 
 
 ## Constitution Check
 
-- User experience, accessibility, and responsiveness prioritized (Core Principle I)
-- All dependencies open source and actively maintained (Additional Constraints)
-- No backend, only public/free API (Additional Constraints)
-- Simplicity and maintainability in code and architecture (Core Principle III)
-- Documentation required for all modules and APIs (Core Principle III)
-- CI/CD, peer review, and up-to-date feature branches required (Core Principle II, Development Workflow)
-- Releases tagged and documented (Development Workflow)
-- Versioning follows semantic versioning (Governance)
+-   User experience, accessibility, and responsiveness prioritized (Core Principle I)
+-   All dependencies open source and actively maintained (Additional Constraints)
+-   No backend, only public/free API (Additional Constraints)
+-   Simplicity and maintainability in code and architecture (Core Principle III)
+-   Documentation required for all modules and APIs (Core Principle III)
+-   CI/CD, peer review, and up-to-date feature branches required (Core Principle II, Development Workflow)
+-   Releases tagged and documented (Development Workflow)
+-   Versioning follows semantic versioning (Governance)
 
 ## Project Structure
 
@@ -68,13 +68,13 @@ src/
 
 ### General UI
 
-- Use Dark mode only with modern style and gradients for better visual appearance.
-- Use shadcn/ui components for all UI elements (cards, buttons, inputs, dialogs, etc.)
-- Use Tailwind CSS for layout and spacing
-- Use semantic HTML for accessibility (nav, main, section, button, etc.)
-- Responsive grid layouts for cards and lists (mobile and desktop)
-- All UI must handle missing/optional data gracefully (never break)
-- All interactive elements accessible by keyboard and screen reader
+-   Use Dark mode only with modern style and gradients for better visual appearance.
+-   Use shadcn/ui components for all UI elements (cards, buttons, inputs, dialogs, etc.)
+-   Use Tailwind CSS for layout and spacing
+-   Use semantic HTML for accessibility (nav, main, section, button, etc.)
+-   Responsive grid layouts for cards and lists (mobile and desktop)
+-   All UI must handle missing/optional data gracefully (never break)
+-   All interactive elements accessible by keyboard and screen reader
 
 ## Complexity Tracking
 
