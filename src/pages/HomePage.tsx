@@ -7,6 +7,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { Header } from '@/components/Header';
 import { ShowCard } from '@/components/ShowCard';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
     getRecentlyVisitedShows,
     removeRecentlyVisitedShow,
@@ -67,18 +69,21 @@ export function HomePage() {
                 <main>
                     {recentShows.length === 0 ? (
                         <div className="text-center">
-                            <p className="mb-4 text-lg text-gray-400">
-                                No recently visited shows yet
-                            </p>
-                            <p className="text-sm text-gray-500">
-                                Start exploring TV shows using the search
-                            </p>
-                            <button
+                            <Alert className="mx-auto max-w-lg border-gray-700 bg-gray-800">
+                                <AlertTitle className="text-white">
+                                    No recently visited shows yet
+                                </AlertTitle>
+                                <AlertDescription className="text-gray-400 justify-items-center">
+                                    Start exploring TV shows using the search
+                                </AlertDescription>
+                            </Alert>
+                            <Button
                                 onClick={() => navigate('/search')}
-                                className="mt-6 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                                className="mt-6"
+                                size="lg"
                             >
                                 Go to Search
-                            </button>
+                            </Button>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">

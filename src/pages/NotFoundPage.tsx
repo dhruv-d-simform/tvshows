@@ -5,6 +5,7 @@
 
 import { useNavigate } from 'react-router';
 import { Home } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export function NotFoundPage() {
     const navigate = useNavigate();
@@ -19,13 +20,14 @@ export function NotFoundPage() {
                 <p className="mb-8 text-gray-400">
                     The page you're looking for doesn't exist or has been moved.
                 </p>
-                <button
+                <Button
                     onClick={() => navigate('/')}
-                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                    size="lg"
+                    className="gap-2"
                 >
                     <Home className="h-5 w-5" />
                     Go to Homepage
-                </button>
+                </Button>
             </div>
         </div>
     );

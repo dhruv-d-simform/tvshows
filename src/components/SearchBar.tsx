@@ -5,6 +5,7 @@
 
 import { Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Input } from '@/components/ui/input';
 
 interface SearchBarProps {
     onSearch: (query: string) => void;
@@ -38,13 +39,13 @@ export function SearchBar({
     return (
         <form onSubmit={handleSubmit} className="w-full max-w-2xl">
             <div className="relative">
-                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                <input
+                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 pointer-events-none z-10" />
+                <Input
                     type="text"
                     value={query}
                     onChange={handleChange}
                     placeholder={placeholder}
-                    className="w-full rounded-lg border border-gray-300 bg-white py-3 pl-11 pr-4 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400"
+                    className="pl-11"
                     aria-label="Search for TV shows"
                 />
             </div>

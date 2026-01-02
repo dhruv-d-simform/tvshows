@@ -7,6 +7,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { Header } from '@/components/Header';
 import { ShowCard } from '@/components/ShowCard';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useSearchShows } from '@/api/search';
 
 export function SearchPage() {
@@ -54,20 +56,28 @@ export function SearchPage() {
                 {/* Search Results */}
                 <main>
                     {isLoading && searchQuery && (
-                        <div className="text-center text-gray-400">
-                            <p className="text-lg">Searching...</p>
+                        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                            {Array.from({ length: 10 }).map((_, i) => (
+                                <div key={i} className="space-y-3">
+                                    <Skeleton className="aspect-2/3 w-full rounded-lg" />
+                                    <Skeleton className="h-4 w-3/4" />
+                                    <Skeleton className="h-3 w-1/2" />
+                                </div>
+                            ))}
                         </div>
                     )}
 
                     {isError && (
-                        <div className="text-center text-red-400">
-                            <p className="text-lg">
-                                Error:{' '}
+                        <Alert
+                            variant="destructive"
+                            className="max-w-lg mx-auto"
+                        >
+                            <AlertDescription>
                                 {error instanceof Error
                                     ? error.message
-                                    : 'Failed to search'}
-                            </p>
-                        </div>
+                                    : 'Failed to search. Please try again.'}
+                            </AlertDescription>
+                        </Alert>
                     )}
 
                     {!isLoading &&
@@ -75,14 +85,12 @@ export function SearchPage() {
                         results &&
                         results.length === 0 &&
                         searchQuery && (
-                            <div className="text-center text-gray-400">
-                                <p className="text-lg">
-                                    No results found for "{searchQuery}"
-                                </p>
-                                <p className="mt-2 text-sm">
-                                    Try a different search term
-                                </p>
-                            </div>
+                            <Alert className="max-w-lg mx-auto border-gray-700 bg-gray-800">
+                                <AlertDescription className="text-gray-300">
+                                    No results found for "{searchQuery}". Try a
+                                    different search term.
+                                </AlertDescription>
+                            </Alert>
                         )}
 
                     {!isLoading &&
@@ -101,11 +109,11 @@ export function SearchPage() {
                         )}
 
                     {!searchQuery && (
-                        <div className="text-center text-gray-400">
-                            <p className="text-lg">
+                        <Alert className="max-w-lg mx-auto border-gray-700 bg-gray-800">
+                            <AlertDescription className="text-gray-300">
                                 Start searching for your favorite TV shows
-                            </p>
-                        </div>
+                            </AlertDescription>
+                        </Alert>
                     )}
                 </main>
             </div>

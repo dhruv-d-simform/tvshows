@@ -3,7 +3,14 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination';
 import type { TVShow } from '@/types';
 import { CastMemberCard } from './CastMemberCard';
 
@@ -61,30 +68,52 @@ export function CastSection({ show }: CastSectionProps) {
 
                 {/* Pagination Controls */}
                 {totalPages > 1 && (
-                    <div className="mt-8 flex items-center justify-center gap-4">
-                        <Button
-                            onClick={() =>
-                                setCastPage((p) => Math.max(0, p - 1))
-                            }
-                            disabled={castPage === 0}
-                            variant="secondary"
-                        >
-                            Previous
-                        </Button>
-                        <span className="text-white">
-                            Page {castPage + 1} of {totalPages}
-                        </span>
-                        <Button
-                            onClick={() =>
-                                setCastPage((p) =>
-                                    Math.min(totalPages - 1, p + 1)
-                                )
-                            }
-                            disabled={castPage === totalPages - 1}
-                            variant="secondary"
-                        >
-                            Next
-                        </Button>
+                    <div className="mt-8 flex justify-center">
+                        <Pagination>
+                            <PaginationContent>
+                                <PaginationItem>
+                                    <PaginationPrevious
+                                        onClick={() =>
+                                            setCastPage((p) =>
+                                                Math.max(0, p - 1)
+                                            )
+                                        }
+                                        className={
+                                            castPage === 0
+                                                ? 'pointer-events-none opacity-50'
+                                                : 'cursor-pointer'
+                                        }
+                                    />
+                                </PaginationItem>
+
+                                {Array.from({ length: totalPages }, (_, i) => (
+                                    <PaginationItem key={i}>
+                                        <PaginationLink
+                                            onClick={() => setCastPage(i)}
+                                            isActive={castPage === i}
+                                            className="cursor-pointer"
+                                        >
+                                            {i + 1}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                ))}
+
+                                <PaginationItem>
+                                    <PaginationNext
+                                        onClick={() =>
+                                            setCastPage((p) =>
+                                                Math.min(totalPages - 1, p + 1)
+                                            )
+                                        }
+                                        className={
+                                            castPage === totalPages - 1
+                                                ? 'pointer-events-none opacity-50'
+                                                : 'cursor-pointer'
+                                        }
+                                    />
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
                     </div>
                 )}
             </div>

@@ -6,6 +6,7 @@
 import { Link, useNavigate } from 'react-router';
 import { Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Input } from '@/components/ui/input';
 
 interface HeaderProps {
     showSearch?: boolean;
@@ -55,15 +56,15 @@ export function Header({
                             className="flex-1 max-w-2xl"
                         >
                             <div className="relative">
-                                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
-                                <input
+                                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 pointer-events-none z-10" />
+                                <Input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) =>
                                         setSearchQuery(e.target.value)
                                     }
                                     placeholder="Search for TV shows..."
-                                    className="w-full rounded-lg border border-gray-600 bg-gray-700 py-2.5 pl-11 pr-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="pl-11 bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus-visible:ring-blue-500 focus-visible:border-blue-500"
                                     aria-label="Search for TV shows"
                                 />
                             </div>
