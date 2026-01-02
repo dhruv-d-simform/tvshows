@@ -58,7 +58,7 @@ export interface TVShow {
     language?: string | null;
     premiered?: string | null;
     ended?: string | null;
-    rating?: Rating;
+    rating?: Rating | null;
     image?: Image | null;
     summary?: string | null;
     externals?: Externals;
@@ -79,7 +79,7 @@ export interface Season {
     episodeOrder?: number | null;
     premiereDate?: string;
     endDate?: string;
-    image?: Image;
+    image?: Image | null;
     summary?: string | null;
 }
 
@@ -92,8 +92,8 @@ export interface Episode {
     season: number;
     number: number;
     runtime?: number | null;
-    rating?: Rating;
-    image?: Image;
+    rating?: Rating | null;
+    image?: Image | null;
     summary?: string | null;
 }
 
@@ -103,7 +103,7 @@ export interface Episode {
 export interface Person {
     id: number;
     name: string;
-    image?: Image;
+    image?: Image | null;
 }
 
 /**
@@ -112,7 +112,7 @@ export interface Person {
 export interface Character {
     id: number;
     name: string;
-    image?: Image;
+    image?: Image | null;
 }
 
 /**

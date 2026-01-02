@@ -33,8 +33,15 @@ async function searchShows(query: string): Promise<SearchResult[]> {
         const validatedData = resultsSchema.safeParse(data);
 
         if (!validatedData.success) {
-            console.error('Search validation error:', validatedData.error);
-            throw new Error('Invalid search results format');
+            console.error(
+                'Search validation error:',
+                validatedData.error.issues
+            );
+            throw new Error(
+                `Search data validation failed: ${validatedData.error.issues
+                    .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
+                    .join(', ')}`
+            );
         }
 
         return validatedData.data as SearchResult[];
@@ -87,10 +94,16 @@ async function getShowDetails(showId: number): Promise<TVShow> {
 
         if (!validatedData.success) {
             console.error(
-                'Show details validation error:',
-                validatedData.error
+                'Show details validation error for show',
+                showId,
+                ':',
+                validatedData.error.issues
             );
-            throw new Error('Invalid show details format');
+            throw new Error(
+                `Show data validation failed: ${validatedData.error.issues
+                    .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
+                    .join(', ')}`
+            );
         }
 
         return validatedData.data as TVShow;

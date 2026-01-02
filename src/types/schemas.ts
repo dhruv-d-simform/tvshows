@@ -6,7 +6,7 @@
 import { z } from 'zod';
 
 /**
- * Image schema - both fields optional
+ * Image schema - both fields optional, entire object can be null
  */
 export const ImageSchema = z
     .object({
@@ -14,16 +14,18 @@ export const ImageSchema = z
         original: z.string().optional(),
     })
     .passthrough()
+    .nullable()
     .optional();
 
 /**
- * Rating schema
+ * Rating schema - can be null or have null average
  */
 export const RatingSchema = z
     .object({
         average: z.number().nullable().optional(),
     })
     .passthrough()
+    .nullable()
     .optional();
 
 /**
@@ -76,7 +78,7 @@ export const PersonSchema = z
     .object({
         id: z.number(),
         name: z.string(),
-        image: ImageSchema,
+        image: ImageSchema.nullable(),
     })
     .passthrough();
 
@@ -87,7 +89,7 @@ export const CharacterSchema = z
     .object({
         id: z.number(),
         name: z.string(),
-        image: ImageSchema,
+        image: ImageSchema.nullable(),
     })
     .passthrough();
 
@@ -111,8 +113,8 @@ export const EpisodeSchema = z
         season: z.number(),
         number: z.number(),
         runtime: z.number().nullable().optional(),
-        rating: RatingSchema,
-        image: ImageSchema,
+        rating: RatingSchema.nullable(),
+        image: ImageSchema.nullable(),
         summary: z.string().nullable().optional(),
     })
     .passthrough();
@@ -127,7 +129,7 @@ export const SeasonSchema = z
         episodeOrder: z.number().nullable().optional(),
         premiereDate: z.string().optional(),
         endDate: z.string().optional(),
-        image: ImageSchema,
+        image: ImageSchema.nullable(),
         summary: z.string().nullable().optional(),
     })
     .passthrough();
@@ -143,7 +145,7 @@ export const TVShowSchema = z
         language: z.string().nullable().optional(),
         premiered: z.string().nullable().optional(),
         ended: z.string().nullable().optional(),
-        rating: RatingSchema,
+        rating: RatingSchema.nullable(),
         image: ImageSchema.nullable(),
         summary: z.string().nullable().optional(),
         externals: ExternalsSchema,
